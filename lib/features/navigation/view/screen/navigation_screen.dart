@@ -35,87 +35,99 @@ class _NavigationScreenState extends State<NavigationScreen> {
       body: SafeArea(
         child: Row(
           children: [
-            NavigationRail(
-              backgroundColor: Color(0XFFf9fafc),
-              extended: isDesktopExpanded,
-              minExtendedWidth: 287,
-              indicatorColor: Colors.transparent,
-              leading: SizedBox(
-                height: 82,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 10),
-                    Text(
-                      isDesktopExpanded ? "HealthLink" : "HL",
-                      style: GoogleFonts.inter(
-                        fontSize: isDesktopExpanded ? 20 : 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+            // Wrapped with LayoutBuilder and SingleChildScrollView to fix the vertical overflow
+            LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                    child: IntrinsicHeight(
+                      child: NavigationRail(
+                        backgroundColor: const Color(0XFFf9fafc),
+                        extended: isDesktopExpanded,
+                        minExtendedWidth: 287,
+                        indicatorColor: Colors.transparent,
+                        leading: SizedBox(
+                          height: 82,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const SizedBox(height: 10),
+                              Text(
+                                isDesktopExpanded ? "HealthLink" : "HL",
+                                style: GoogleFonts.inter(
+                                  fontSize: isDesktopExpanded ? 20 : 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              if (isDesktopExpanded)
+                                Text(
+                                  "Clinical Atelier",
+                                  style: GoogleFonts.inter(
+                                    fontSize: 13,
+                                    color: const Color(0XFF3D4947),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                        selectedIndex: _selectedIndex,
+                        onDestinationSelected: (int index) {
+                          setState(() {
+                            _selectedIndex = index;
+                          });
+                        },
+                        selectedLabelTextStyle: const TextStyle(
+                          color: Color(0XFF0d9488),
+                          fontWeight: FontWeight.w600,
+                        ),
+                        unselectedLabelTextStyle: const TextStyle(
+                          color: Color(0XFF3d4947),
+                        ),
+                        destinations: const [
+                          NavigationRailDestination(
+                            padding: EdgeInsets.symmetric(vertical: 8),
+                            icon: Icon(Icons.dashboard_outlined),
+                            selectedIcon: Icon(Icons.dashboard, color: Color(0XFF0d9488)),
+                            label: Text("Dashboard", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                          ),
+                          NavigationRailDestination(
+                            padding: EdgeInsets.symmetric(vertical: 8),
+                            icon: Icon(Icons.calendar_today_outlined),
+                            selectedIcon: Icon(Icons.calendar_today, color: Color(0XFF0d9488)),
+                            label: Text("My Schedule", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                          ),
+                          NavigationRailDestination(
+                            padding: EdgeInsets.symmetric(vertical: 8),
+                            icon: Icon(Icons.event_note_outlined),
+                            selectedIcon: Icon(Icons.event_note, color: Color(0XFF0d9488)),
+                            label: Text("Appointments", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                          ),
+                          NavigationRailDestination(
+                            padding: EdgeInsets.symmetric(vertical: 8),
+                            icon: Icon(Icons.payments_outlined),
+                            selectedIcon: Icon(Icons.payments, color: Color(0XFF0d9488)),
+                            label: Text("Financials", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                          ),
+                          NavigationRailDestination(
+                            padding: EdgeInsets.symmetric(vertical: 8),
+                            icon: Icon(Icons.star_border_outlined),
+                            selectedIcon: Icon(Icons.star, color: Color(0XFF0d9488)),
+                            label: Text("Ratings", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                          ),
+                          NavigationRailDestination(
+                            padding: EdgeInsets.symmetric(vertical: 8),
+                            icon: Icon(Icons.settings_outlined),
+                            selectedIcon: Icon(Icons.settings, color: Color(0XFF0d9488)),
+                            label: Text("Settings", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                          ),
+                        ],
                       ),
                     ),
-                    if (isDesktopExpanded)
-                      Text(
-                        "Clinical Atelier",
-                        style: GoogleFonts.inter(
-                          fontSize: 13,
-                          color: const Color(0XFF3D4947),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              selectedIndex: _selectedIndex,
-              onDestinationSelected: (int index) {
-                setState(() {
-                  _selectedIndex = index;
-                });
+                  ),
+                );
               },
-              selectedLabelTextStyle: const TextStyle(
-                color: Color(0XFF0d9488),
-                fontWeight: FontWeight.w600,
-              ),
-              unselectedLabelTextStyle: const TextStyle(
-                color: Color(0XFF3d4947),
-              ),
-              destinations: const [
-                NavigationRailDestination(
-                  padding: EdgeInsets.symmetric(vertical: 8),
-                  icon: Icon(Icons.dashboard_outlined),
-                  selectedIcon: Icon(Icons.dashboard, color: Color(0XFF0d9488)),
-                  label: Text("Dashboard", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-                ),
-                NavigationRailDestination(
-                  padding: EdgeInsets.symmetric(vertical: 8),
-                  icon: Icon(Icons.calendar_today_outlined),
-                  selectedIcon: Icon(Icons.calendar_today, color: Color(0XFF0d9488)),
-                  label: Text("My Schedule", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-                ),
-                NavigationRailDestination(
-                  padding: EdgeInsets.symmetric(vertical: 8),
-                  icon: Icon(Icons.event_note_outlined),
-                  selectedIcon: Icon(Icons.event_note, color: Color(0XFF0d9488)),
-                  label: Text("Appointments", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-                ),
-                NavigationRailDestination(
-                  padding: EdgeInsets.symmetric(vertical: 8),
-                  icon: Icon(Icons.payments_outlined),
-                  selectedIcon: Icon(Icons.payments, color: Color(0XFF0d9488)),
-                  label: Text("Financials", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-                ),
-                NavigationRailDestination(
-                  padding: EdgeInsets.symmetric(vertical: 8),
-                  icon: Icon(Icons.star_border_outlined),
-                  selectedIcon: Icon(Icons.star, color: Color(0XFF0d9488)),
-                  label: Text("Ratings", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-                ),
-                NavigationRailDestination(
-                  padding: EdgeInsets.symmetric(vertical: 8),
-                  icon: Icon(Icons.settings_outlined),
-                  selectedIcon: Icon(Icons.settings, color: Color(0XFF0d9488)),
-                  label: Text("Settings", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-                ),
-              ],
             ),
             const VerticalDivider(thickness: 1, width: 1),
             Expanded(
