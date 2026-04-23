@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:window_manager/window_manager.dart';
 
-import 'features/navigation/view/screen/navigation_screen.dart';
+import 'features/login/view/screen/login_screen.dart';
 
+/// The main entry point for the HealthLink desktop application.
+///
+/// Initializes the Flutter bindings and configures the desktop window
+/// properties (size, centering, title) using the [window_manager] package.
+/// Once the window is ready, it is displayed and focused.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -13,7 +18,7 @@ Future<void> main() async {
     size: Size(1200, 800),
     minimumSize: Size(900, 600),
     center: true,
-    title: "My App",
+    title: "HealthLink Clinical Atelier",
   );
 
   windowManager.waitUntilReadyToShow(windowOptions, () async {
@@ -24,9 +29,23 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
+/// The root application widget.
+///
+/// Sets up the [MaterialApp] with the global theme configuration and responsive
+/// layout wrapper using [ResponsiveBreakpoints].
+/// 
+/// @param key The widget key.
 class MyApp extends StatelessWidget {
+  /// Constructs the [MyApp] widget.
   const MyApp({super.key});
 
+  /// Builds the [MaterialApp] and configures responsive breakpoints.
+  ///
+  /// This wrapper ensures that child screens can adapt to MOBILE, TABLET,
+  /// DESKTOP, and 4K breakpoints.
+  ///
+  /// @param context The build context.
+  /// @return A configured [MaterialApp] widget.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -49,7 +68,7 @@ class MyApp extends StatelessWidget {
         colorSchemeSeed: const Color(0XFF0d9488),
       ),
 
-      home: const NavigationScreen(),
+      home: const LoginScreen(),
     );
   }
 }

@@ -1,16 +1,45 @@
 import 'package:flutter/material.dart';
 import 'record_payment_dialog.dart';
 
+/// A data model representing a single appointment.
+///
+/// Contains information about the patient, time, and current status of the
+/// scheduled appointment.
 class AppointmentData {
+  /// The full name of the patient.
   final String name;
+
+  /// A unique identifier for the appointment.
   final String id;
+
+  /// An optional URL pointing to the patient's avatar image.
   final String? avatarUrl;
+
+  /// The initials of the patient, used as a fallback if [avatarUrl] is null.
   final String initials;
+
+  /// The formatted date of the appointment.
   final String date;
+
+  /// The formatted time of the appointment.
   final String time;
+
+  /// The current status (e.g., "Upcoming", "Completed", "Cancelled").
   final String status;
+
+  /// Indicates if the appointment record should be visually crossed out.
   final bool isCrossedOut;
 
+  /// Constructs an [AppointmentData] instance.
+  ///
+  /// @param name The patient's full name.
+  /// @param id The unique appointment ID.
+  /// @param avatarUrl Optional image URL.
+  /// @param initials Fallback text for the avatar.
+  /// @param date Appointment date.
+  /// @param time Appointment time.
+  /// @param status The appointment status.
+  /// @param isCrossedOut Whether the item is crossed out (defaults to false).
   AppointmentData({
     required this.name,
     required this.id,
@@ -23,9 +52,20 @@ class AppointmentData {
   });
 }
 
+/// A stateful-like widget that displays a table of recent appointments.
+///
+/// This widget handles rendering a responsive [DataTable] showing patient details,
+/// schedules, statuses, and contextual actions.
+///
+/// @param key The widget key.
 class AppointmentsListWidget extends StatelessWidget {
+  /// Constructs the [AppointmentsListWidget].
   const AppointmentsListWidget({super.key});
 
+  /// Builds the table wrapper and the data table itself.
+  ///
+  /// @param context The build context.
+  /// @return A container with a horizontally scrollable table.
   @override
   Widget build(BuildContext context) {
     final List<AppointmentData> mockData = [
@@ -104,6 +144,11 @@ class AppointmentsListWidget extends StatelessWidget {
     );
   }
 
+  /// Builds a single data row for the table.
+  ///
+  /// @param context The build context used for generating dialogs.
+  /// @param data The [AppointmentData] to populate the row.
+  /// @return A configured [DataRow] for the data table.
   DataRow _buildRow(BuildContext context, AppointmentData data) {
     final textStyle = TextStyle(
       color: data.isCrossedOut ? const Color(0XFF8e9998) : Colors.black,
@@ -163,6 +208,13 @@ class AppointmentsListWidget extends StatelessWidget {
     );
   }
 
+  /// Generates a styled badge representing the current status.
+  ///
+  /// Styles the badge with dynamic background colors, text colors, and indicators
+  /// depending on whether the status is "Upcoming", "Completed", or "Cancelled".
+  ///
+  /// @param status The string representing the appointment status.
+  /// @return A decorated container rendering the status visually.
   Widget _buildStatusBadge(String status) {
     Color bgColor;
     Color textColor;
@@ -220,6 +272,15 @@ class AppointmentsListWidget extends StatelessWidget {
     );
   }
 
+  /// Generates action buttons for an appointment based on its status.
+  ///
+  /// "Completed" appointments receive a "Record payment" button.
+  /// "Upcoming" appointments receive a "Mark Completed" button.
+  /// All statuses have a generic "View History" button.
+  ///
+  /// @param context The build context used for rendering action modals.
+  /// @param status The current status string.
+  /// @return A row containing relevant action buttons.
   Widget _buildActions(BuildContext context, String status) {
     return Row(
       mainAxisSize: MainAxisSize.min,

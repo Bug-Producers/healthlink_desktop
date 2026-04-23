@@ -3,9 +3,24 @@ import '../../../../core/app_bar_widget.dart';
 import '../widget/appointments_header.dart';
 import '../widget/appointments_list.dart';
 
+/// The primary screen for managing medical appointments.
+///
+/// This widget provides a responsive layout incorporating the global [AppBarWidget],
+/// the [AppointmentsHeaderWidget] for context, and the [AppointmentsListWidget] 
+/// for displaying a detailed table of patient appointments.
+///
+/// @param key The widget key.
 class AppointmentScreen extends StatelessWidget {
+  /// Constructs the [AppointmentScreen].
   const AppointmentScreen({super.key});
 
+  /// Builds the fully responsive appointment layout.
+  ///
+  /// Adjusts horizontal padding and vertical spacing based on the
+  /// available screen width using a [LayoutBuilder].
+  ///
+  /// @param context The build context.
+  /// @return A constrained, scrollable screen.
   @override
   Widget build(BuildContext context) {
     return Scaffold(

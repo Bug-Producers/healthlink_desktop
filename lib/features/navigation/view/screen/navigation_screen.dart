@@ -12,10 +12,10 @@ class NavigationScreen extends StatefulWidget {
   const NavigationScreen({super.key});
 
   @override
-  State<NavigationScreen> createState() => _NavigationScreenState();
+  State<NavigationScreen> createState() => NavigationScreenState();
 }
 
-class _NavigationScreenState extends State<NavigationScreen> {
+class NavigationScreenState extends State<NavigationScreen> {
   int _selectedIndex = 0;
   final List<Widget> _screens = [
     DashboardScreen(),
@@ -25,6 +25,14 @@ class _NavigationScreenState extends State<NavigationScreen> {
     RatingsScreen(),
     SettingsScreen(),
   ];
+
+  void navigateTo(int index) {
+    if (index >= 0 && index < _screens.length) {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

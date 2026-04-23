@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
 
+/// A dialog widget for recording manual cash payments.
+///
+/// This modal pops up when an administrator needs to log a direct patient payment
+/// outside the automated billing system. It provides an amount input field and
+/// an action button to submit.
+///
+/// @param key The widget key.
 class RecordPaymentDialog extends StatelessWidget {
+  /// Constructs the [RecordPaymentDialog].
   const RecordPaymentDialog({super.key});
 
+  /// Builds the dialog layout and styling.
+  ///
+  /// @param context The build context.
+  /// @return A styled [Dialog] containing a form.
   @override
   Widget build(BuildContext context) {
     return Dialog(
