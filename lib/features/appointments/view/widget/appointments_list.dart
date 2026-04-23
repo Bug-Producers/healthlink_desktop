@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'record_payment_dialog.dart';
 
 class AppointmentData {
   final String name;
@@ -93,7 +94,7 @@ class AppointmentsListWidget extends StatelessWidget {
                     DataColumn(label: Text("STATUS")),
                     DataColumn(label: Text("ACTIONS")),
                   ],
-                  rows: mockData.map((data) => _buildRow(data)).toList(),
+                  rows: mockData.map((data) => _buildRow(context, data)).toList(),
                 ),
               ),
             ),
@@ -103,7 +104,7 @@ class AppointmentsListWidget extends StatelessWidget {
     );
   }
 
-  DataRow _buildRow(AppointmentData data) {
+  DataRow _buildRow(BuildContext context, AppointmentData data) {
     final textStyle = TextStyle(
       color: data.isCrossedOut ? const Color(0XFF8e9998) : Colors.black,
       fontSize: 15,
@@ -157,7 +158,7 @@ class AppointmentsListWidget extends StatelessWidget {
         DataCell(Text(data.date, style: textStyle)),
         DataCell(Text(data.time, style: textStyle)),
         DataCell(_buildStatusBadge(data.status)),
-        DataCell(_buildActions(data.status)),
+        DataCell(_buildActions(context, data.status)),
       ],
     );
   }
@@ -219,7 +220,7 @@ class AppointmentsListWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildActions(String status) {
+  Widget _buildActions(BuildContext context, String status) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -257,7 +258,12 @@ class AppointmentsListWidget extends StatelessWidget {
         ] else if (status == "Completed") ...[
           const SizedBox(width: 12),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => const RecordPaymentDialog(),
+              );
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0XFF006D60),
               foregroundColor: Colors.white,
