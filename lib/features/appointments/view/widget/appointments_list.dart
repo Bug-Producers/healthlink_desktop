@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../view_model/appointments_view_model.dart';
 import 'record_payment_dialog.dart';
 
 /// A data model representing a single appointment.
@@ -58,7 +60,7 @@ class AppointmentData {
 /// schedules, statuses, and contextual actions.
 ///
 /// @param key The widget key.
-class AppointmentsListWidget extends StatelessWidget {
+class AppointmentsListWidget extends ConsumerWidget {
   /// Constructs the [AppointmentsListWidget].
   const AppointmentsListWidget({super.key});
 
@@ -67,37 +69,31 @@ class AppointmentsListWidget extends StatelessWidget {
   /// @param context The build context.
   /// @return A container with a horizontally scrollable table.
   @override
-  Widget build(BuildContext context) {
-    final List<AppointmentData> mockData = [
-      AppointmentData(
-        name: "Sarah Jenkins",
-        id: "#99281",
-        avatarUrl: "https://randomuser.me/api/portraits/women/44.jpg",
-        initials: "SJ",
-        date: "Oct 24, 2023",
-        time: "10:30 AM",
-        status: "Upcoming",
-      ),
-      AppointmentData(
-        name: "Michael Roberts",
-        id: "#88372",
-        avatarUrl: null,
-        initials: "MR",
-        date: "Oct 24, 2023",
-        time: "11:15 AM",
-        status: "Completed",
-      ),
-      AppointmentData(
-        name: "David Chen",
-        id: "#44921",
-        avatarUrl: "https://randomuser.me/api/portraits/men/32.jpg",
-        initials: "DC",
-        date: "Oct 24, 2023",
-        time: "01:00 PM",
-        status: "Cancelled",
-        isCrossedOut: true,
-      ),
-    ];
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appointmentsState = ref.watch(appointmentsViewModelProvider);
+
+    return appointmentsState.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (err, stack) => Center(child: Text('Error: $err')),
+      data: (appointments) {
+        final List<AppointmentData> listData = appointments.map((apt) {
+          String statusStr = "Upcoming";
+          if (apt.status == 1) statusStr = "Completed";
+          if (apt.status == 2) statusStr = "Cancelled";
+
+          return AppointmentData(
+            name: apt.patientName ?? "Unknown",
+            id: apt.id,
+            avatarUrl: apt.patientImage,
+            initials: (apt.patientName != null && apt.patientName!.isNotEmpty) 
+                ? apt.patientName![0] 
+                : "?",
+            date: apt.date,
+            time: "${apt.startTime} - ${apt.endTime}",
+            status: statusStr,
+            isCrossedOut: apt.status == 2,
+          );
+        }).toList();
 
     return Container(
       decoration: BoxDecoration(
@@ -134,13 +130,15 @@ class AppointmentsListWidget extends StatelessWidget {
                     DataColumn(label: Text("STATUS")),
                     DataColumn(label: Text("ACTIONS")),
                   ],
-                  rows: mockData.map((data) => _buildRow(context, data)).toList(),
+                  rows: listData.map((data) => _buildRow(context, data)).toList(),
                 ),
               ),
             ),
           );
         },
       ),
+    );
+      },
     );
   }
 

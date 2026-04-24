@@ -1,9 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:healthlink_desktop/features/navigation/view/screen/navigation_screen.dart';
 import 'package:healthlink_desktop/features/signup/view/screen/signup_screen.dart';
+import '../../view_model/auth_view_model.dart';
 
-class LoginFormWidget extends StatelessWidget {
+class LoginFormWidget extends ConsumerStatefulWidget {
   const LoginFormWidget({super.key});
+
+  @override
+  ConsumerState<LoginFormWidget> createState() => _LoginFormWidgetState();
+}
+
+class _LoginFormWidgetState extends ConsumerState<LoginFormWidget> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +41,7 @@ class LoginFormWidget extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             TextFormField(
+              controller: _emailController,
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.mail_outline, color: Color(0XFFa5b0b5), size: 20),
                 hintText: "dr.smith@healthlink.com",
@@ -81,6 +100,7 @@ class LoginFormWidget extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             TextFormField(
+              controller: _passwordController,
               obscureText: true,
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.lock_outline, color: Color(0XFFa5b0b5), size: 20),
@@ -108,12 +128,31 @@ class LoginFormWidget extends StatelessWidget {
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => const NavigationScreen(),
-                ),
-              );
+            onPressed: _isLoading ? null : () async {
+              setState(() { _isLoading = true; });
+              try {
+                await ref.read(authViewModelProvider.notifier).login(
+                  _emailController.text, 
+                  _passwordController.text
+                );
+                if (mounted) {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => const NavigationScreen(),
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Login failed: ${e.toString()}')),
+                  );
+                }
+              } finally {
+                if (mounted) {
+                  setState(() { _isLoading = false; });
+                }
+              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF006D60),
@@ -124,13 +163,21 @@ class LoginFormWidget extends StatelessWidget {
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Text(
-                  'Sign In',
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
-                ),
-                SizedBox(width: 8),
-                Icon(Icons.arrow_forward, size: 18),
+              children: [
+                if (_isLoading)
+                  const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                  )
+                else ...[
+                  const Text(
+                    'Sign In',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(width: 8),
+                  const Icon(Icons.arrow_forward, size: 18),
+                ],
               ],
             ),
           ),
