@@ -62,9 +62,7 @@ class AppointmentScreen extends ConsumerWidget {
                             ),
                           ),
                         ),
-                        data: (appointments) => AppointmentsListWidget(
-                          appointments: appointments,
-                        ),
+                        data: (_) => const AppointmentsListWidget(),
                       ),
                       const SizedBox(height: 40),
                     ],

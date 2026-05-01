@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:healthlink_desktop/features/login/view/screen/login_screen.dart';
 import 'package:healthlink_desktop/features/navigation/view/screen/navigation_screen.dart';
+import '../../../../core/models/models.dart';
 import '../../../../core/utils/error_handler.dart';
 import '../../view_model/signup_view_model.dart';
 
@@ -230,9 +231,7 @@ class _SignupFormWidgetState extends ConsumerState<SignupFormWidget> {
 
     setState(() => _isLoading = true);
     try {
-      await ref.read(signupViewModelProvider.notifier).register(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
+      final registration = DoctorRegistration(
         name: _nameController.text.trim(),
         city: _cityController.text.trim(),
         country: _countryController.text.trim(),
@@ -240,8 +239,14 @@ class _SignupFormWidgetState extends ConsumerState<SignupFormWidget> {
         about: _aboutController.text.trim(),
         appointmentDuration: int.tryParse(_selectedDuration) ?? 30,
         bufferTime: int.tryParse(_selectedBuffer) ?? 10,
-        departmentName: _selectedDepartment,
+        department: {"name": _selectedDepartment},
         expYears: int.tryParse(_expYearsController.text.trim()) ?? 0,
+      );
+
+      await ref.read(signupViewModelProvider.notifier).signup(
+        _emailController.text.trim(),
+        _passwordController.text,
+        registration,
       );
       if (mounted) {
         ErrorHandler.showSuccess(context, 'Account created successfully! Welcome aboard.');
