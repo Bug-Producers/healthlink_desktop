@@ -5,8 +5,29 @@ import '../widget/schedule_header.dart';
 import '../widget/weekly_availability.dart';
 import '../widget/consultation_parameters.dart';
 
-class MyScheduleScreen extends StatelessWidget {
+/// [MyScheduleScreen] is the administrative interface for managing clinical hours.
+///
+/// It allows doctors to define their weekly availability and configure 
+/// consultation parameters like session duration and buffer times. 
+///
+/// It utilizes [GlobalKey]s to bridge the [ScheduleHeaderWidget] actions 
+/// with the child state management of the availability and parameter forms.
+class MyScheduleScreen extends StatefulWidget {
+  /// Constructs a [MyScheduleScreen].
+  /// 
+  /// @param key The widget key.
   const MyScheduleScreen({super.key});
+
+  @override
+  State<MyScheduleScreen> createState() => _MyScheduleScreenState();
+}
+
+class _MyScheduleScreenState extends State<MyScheduleScreen> {
+  /// Reference to the [WeeklyAvailabilityWidget] state for bulk saving.
+  final _weeklyKey = GlobalKey();
+  
+  /// Reference to the [ConsultationParametersWidget] state for bulk saving.
+  final _consultationKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +50,10 @@ class MyScheduleScreen extends StatelessWidget {
                     SizedBox(height: headerSpacing),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: paddingValue),
-                      child: const ScheduleHeaderWidget(),
+                      child: ScheduleHeaderWidget(
+                        weeklyKey: _weeklyKey,
+                        consultationKey: _consultationKey,
+                      ),
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: paddingValue),
@@ -42,14 +66,14 @@ class MyScheduleScreen extends StatelessWidget {
                             rowCrossAxisAlignment: CrossAxisAlignment.start,
                             rowSpacing: 30,
                             columnSpacing: 20,
-                            children: const [
+                            children: [
                               ResponsiveRowColumnItem(
-                                rowFlex: 6, // 60% of the width
-                                child: WeeklyAvailabilityWidget(),
+                                rowFlex: 6,
+                                child: WeeklyAvailabilityWidget(key: _weeklyKey),
                               ),
                               ResponsiveRowColumnItem(
-                                rowFlex: 4, // 40% of the width
-                                child: ConsultationParametersWidget(),
+                                rowFlex: 4,
+                                child: ConsultationParametersWidget(key: _consultationKey),
                               ),
                             ],
                           ),

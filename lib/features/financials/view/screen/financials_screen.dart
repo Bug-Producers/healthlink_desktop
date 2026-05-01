@@ -6,7 +6,15 @@ import '../widget/revenue_analytics.dart';
 import '../widget/recent_transactions.dart';
 import '../widget/record_cash_payment.dart';
 
+/// [FinancialsScreen] is the centralized hub for clinical revenue management.
+///
+/// It visualizes earnings trends via interactive charts, provides a detailed 
+/// log of recent transactions, and offers an interface for recording 
+/// direct cash payments from patients.
 class FinancialsScreen extends StatelessWidget {
+  /// Constructs a [FinancialsScreen].
+  /// 
+  /// @param key The widget key.
   const FinancialsScreen({super.key});
 
   @override

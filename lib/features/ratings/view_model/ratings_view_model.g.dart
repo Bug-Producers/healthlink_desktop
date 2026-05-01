@@ -1,27 +1,28 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'websocket_client.dart';
+part of 'ratings_view_model.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$webSocketClientHash() => r'cc8a1500a420a594deab28fb9458a59b4ea14ea7';
+String _$ratingsViewModelHash() => r'1ce07ce5ff2c29d188663cb0a20c64ae7a02d9a8';
 
-/// See also [webSocketClient].
-@ProviderFor(webSocketClient)
-final webSocketClientProvider = Provider<WebSocketClient>.internal(
-  webSocketClient,
-  name: r'webSocketClientProvider',
+/// ViewModel for fetching and caching ratings data from the API.
+///
+/// Copied from [RatingsViewModel].
+@ProviderFor(RatingsViewModel)
+final ratingsViewModelProvider =
+    AutoDisposeAsyncNotifierProvider<RatingsViewModel, RatingsData>.internal(
+  RatingsViewModel.new,
+  name: r'ratingsViewModelProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$webSocketClientHash,
+      : _$ratingsViewModelHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef WebSocketClientRef = ProviderRef<WebSocketClient>;
+typedef _$RatingsViewModel = AutoDisposeAsyncNotifier<RatingsData>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

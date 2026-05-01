@@ -8,24 +8,41 @@ import 'package:healthlink_desktop/features/ratings/view/screen/ratings_screen.d
 import 'package:healthlink_desktop/features/settings/view/screen/settings_screen.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
+/// [NavigationScreen] acts as the root shell for the authenticated application.
+///
+/// It implements a [NavigationRail] layout that remains persistent as the user 
+/// switches between primary feature modules.
 class NavigationScreen extends StatefulWidget {
+  /// Constructs a [NavigationScreen].
+  /// 
+  /// @param key The widget key.
   const NavigationScreen({super.key});
 
   @override
   State<NavigationScreen> createState() => NavigationScreenState();
 }
 
+/// State for [NavigationScreen], exposing navigation controls to descendant widgets.
 class NavigationScreenState extends State<NavigationScreen> {
+  /// Current active index in the [IndexedStack].
   int _selectedIndex = 0;
+
+  /// The list of top-level feature screens managed by this navigation shell.
   final List<Widget> _screens = [
-    DashboardScreen(),
-    MyScheduleScreen(),
-    AppointmentScreen(),
-    FinancialsScreen(),
-    RatingsScreen(),
-    SettingsScreen(),
+    const DashboardScreen(),
+    const MyScheduleScreen(),
+    const AppointmentScreen(),
+    const FinancialsScreen(),
+    const RatingsScreen(),
+    const SettingsScreen(),
   ];
 
+  /// Programmatically changes the active screen.
+  /// 
+  /// This is used by global components (like the App Bar profile menu) to 
+  /// jump to specific sections of the app.
+  /// 
+  /// @param index The target index to navigate to.
   void navigateTo(int index) {
     if (index >= 0 && index < _screens.length) {
       setState(() {
@@ -43,7 +60,6 @@ class NavigationScreenState extends State<NavigationScreen> {
       body: SafeArea(
         child: Row(
           children: [
-            // Wrapped with LayoutBuilder and SingleChildScrollView to fix the vertical overflow
             LayoutBuilder(
               builder: (context, constraints) {
                 return SingleChildScrollView(

@@ -5,7 +5,15 @@ import '../widget/ratings_header_widget.dart';
 import '../widget/overall_rating_widget.dart';
 import '../widget/patient_reviews_widget.dart';
 
+/// [RatingsScreen] provides a deep dive into patient feedback and quality 
+/// of care metrics.
+///
+/// It visualizes the star distribution (1-5) and provides a searchable, 
+/// sortable feed of detailed patient reviews.
 class RatingsScreen extends StatelessWidget {
+  /// Constructs a [RatingsScreen].
+  /// 
+  /// @param key The widget key.
   const RatingsScreen({super.key});
 
   @override

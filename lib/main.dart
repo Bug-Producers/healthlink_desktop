@@ -9,9 +9,10 @@ import 'features/login/view/screen/login_screen.dart';
 
 /// The main entry point for the HealthLink desktop application.
 ///
-/// Initializes the Flutter bindings and configures the desktop window
-/// properties (size, centering, title) using the [window_manager] package.
-/// Once the window is ready, it is displayed and focused.
+/// Initializes the Flutter bindings, environment variables, Firebase, 
+/// and configures the desktop window properties.
+/// 
+/// @return A [Future] that completes when the application has started.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -54,10 +55,10 @@ Future<void> main() async {
 ///
 /// Sets up the [MaterialApp] with the global theme configuration and responsive
 /// layout wrapper using [ResponsiveBreakpoints].
-/// 
-/// @param key The widget key.
 class MyApp extends StatelessWidget {
   /// Constructs the [MyApp] widget.
+  /// 
+  /// @param key The widget key.
   const MyApp({super.key});
 
   /// Builds the [MaterialApp] and configures responsive breakpoints.

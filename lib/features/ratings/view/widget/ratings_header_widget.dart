@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 
+/// [RatingsHeaderWidget] provides the navigational context and utility actions 
+/// for the Ratings & Feedback screen.
+///
+/// It features a responsive layout that adapts to different screen widths, 
+/// providing quick access to feedback export utilities.
 class RatingsHeaderWidget extends StatelessWidget {
+  /// Constructs a [RatingsHeaderWidget].
+  /// 
+  /// @param key The widget key.
   const RatingsHeaderWidget({super.key});
 
   @override

@@ -1,61 +1,79 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 import '../../../../core/app_bar_widget.dart';
+import '../../../../core/utils/error_handler.dart';
+import '../../view_model/appointments_view_model.dart';
 import '../widget/appointments_header.dart';
 import '../widget/appointments_list.dart';
 
-/// The primary screen for managing medical appointments.
+/// [AppointmentScreen] manages the clinical agenda for the doctor.
 ///
-/// This widget provides a responsive layout incorporating the global [AppBarWidget],
-/// the [AppointmentsHeaderWidget] for context, and the [AppointmentsListWidget] 
-/// for displaying a detailed table of patient appointments.
-///
-/// @param key The widget key.
-class AppointmentScreen extends StatelessWidget {
-  /// Constructs the [AppointmentScreen].
+/// It provides a comprehensive list of scheduled patient visits, enabling 
+/// status updates, payment tracking, and medical record access.
+class AppointmentScreen extends ConsumerWidget {
+  /// Constructs an [AppointmentScreen].
+  /// 
+  /// @param key The widget key.
   const AppointmentScreen({super.key});
 
-  /// Builds the fully responsive appointment layout.
-  ///
-  /// Adjusts horizontal padding and vertical spacing based on the
-  /// available screen width using a [LayoutBuilder].
-  ///
-  /// @param context The build context.
-  /// @return A constrained, scrollable screen.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final paddingValue = ResponsiveValue<double>(
+      context,
+      conditionalValues: [
+        const Condition.smallerThan(name: TABLET, value: 16.0),
+        const Condition.equals(name: TABLET, value: 24.0),
+      ],
+    ).value ?? 40.0;
+
+    final appointmentsState = ref.watch(appointmentsViewModelProvider);
+
     return Scaffold(
       backgroundColor: const Color(0XFFf7f9fb),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final paddingValue = constraints.maxWidth < 800 ? 16.0 : 40.0;
-          final headerSpacing = constraints.maxWidth < 800 ? 24.0 : 45.0;
-          final bodySpacing = constraints.maxWidth < 800 ? 16.0 : 31.0;
-
-          return SingleChildScrollView(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1440),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const AppBarWidget(),
-                    SizedBox(height: headerSpacing),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: paddingValue),
-                      child: const AppointmentsHeaderWidget(),
-                    ),
-                    SizedBox(height: bodySpacing),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: paddingValue),
-                      child: const AppointmentsListWidget(),
-                    ),
-                    const SizedBox(height: 40),
-                  ],
+      body: SingleChildScrollView(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1440),
+            child: Column(
+              children: [
+                const AppBarWidget(),
+                const SizedBox(height: 45),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: paddingValue),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const AppointmentsHeaderWidget(),
+                      const SizedBox(height: 31),
+                      appointmentsState.when(
+                        loading: () => const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(40),
+                            child: CircularProgressIndicator(color: Color(0xFF006D60)),
+                          ),
+                        ),
+                        error: (err, _) => Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(40),
+                            child: Text(
+                              ErrorHandler.getMessage(err),
+                              style: const TextStyle(color: Color(0XFF5a6362)),
+                            ),
+                          ),
+                        ),
+                        data: (appointments) => AppointmentsListWidget(
+                          appointments: appointments,
+                        ),
+                      ),
+                      const SizedBox(height: 40),
+                    ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }

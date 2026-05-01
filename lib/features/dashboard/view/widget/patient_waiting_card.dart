@@ -1,12 +1,30 @@
 import 'package:flutter/material.dart';
+import '../../../../core/models/models.dart';
 
+/// A card displaying the next patient waiting, with real appointment data.
+///
+/// Shows the patient's name, avatar, appointment time, and actions
+/// to view records or mark the visit as complete.
 class PatientWaitingCard extends StatelessWidget {
-  const PatientWaitingCard({super.key});
+  final Appointment appointment;
+  final VoidCallback? onMarkComplete;
+  final VoidCallback? onViewRecords;
+
+  const PatientWaitingCard({
+    super.key,
+    required this.appointment,
+    this.onMarkComplete,
+    this.onViewRecords,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final initials = (appointment.patientName != null && appointment.patientName!.isNotEmpty)
+        ? appointment.patientName![0].toUpperCase()
+        : '?';
+
     return Container(
-      width: double.infinity, // Fill parent
+      width: double.infinity,
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         color: Colors.white,
@@ -59,9 +77,9 @@ class PatientWaitingCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    const Text(
-                      '10:15 AM',
-                      style: TextStyle(
+                    Text(
+                      '${appointment.startTime} - ${appointment.endTime}',
+                      style: const TextStyle(
                         color: Color(0xFF1A1A2E),
                         fontSize: 16, fontWeight: FontWeight.w700,
                       ),
@@ -71,32 +89,47 @@ class PatientWaitingCard extends StatelessWidget {
                 const SizedBox(height: 28),
                 Row(
                   children: [
-                    Container(
-                      width: 76, height: 76,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.15),
-                            blurRadius: 16, offset: const Offset(0, 8),
-                          ),
-                        ],
-                        image: const DecorationImage(
-                          image: NetworkImage('https://randomuser.me/api/portraits/women/44.jpg'),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                    CircleAvatar(
+                      radius: 38,
+                      backgroundColor: const Color(0xFFE8ECEF),
+                      backgroundImage: appointment.patientImage != null && appointment.patientImage!.isNotEmpty
+                          ? NetworkImage(appointment.patientImage!)
+                          : null,
+                      child: appointment.patientImage == null || appointment.patientImage!.isEmpty
+                          ? Text(
+                              initials,
+                              style: const TextStyle(
+                                color: Color(0xFF3d4947),
+                                fontWeight: FontWeight.w700,
+                                fontSize: 24,
+                              ),
+                            )
+                          : null,
                     ),
                     const SizedBox(width: 20),
-                    const Expanded(
-                      child: Text(
-                        'Sarah Johnson',
-                        style: TextStyle(
-                          color: Color(0xFF1A1A2E),
-                          fontSize: 32, fontWeight: FontWeight.w800,
-                          letterSpacing: -0.5,
-                        ),
-                        overflow: TextOverflow.ellipsis,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            appointment.patientName ?? 'Unknown Patient',
+                            style: const TextStyle(
+                              color: Color(0xFF1A1A2E),
+                              fontSize: 28, fontWeight: FontWeight.w800,
+                              letterSpacing: -0.5,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            appointment.date,
+                            style: const TextStyle(
+                              color: Color(0xFF5a6362),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -110,28 +143,18 @@ class PatientWaitingCard extends StatelessWidget {
                         children: [
                           Flexible(
                             child: TextButton(
-                              onPressed: () {},
+                              onPressed: onViewRecords,
                               style: TextButton.styleFrom(
                                 foregroundColor: const Color(0xFF0E796A),
                               ),
                               child: const Text('View Records', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700), overflow: TextOverflow.ellipsis),
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          Flexible(
-                            child: TextButton(
-                              onPressed: () {},
-                              style: TextButton.styleFrom(
-                                foregroundColor: const Color(0xFF555555),
-                              ),
-                              child: const Text('Reschedule', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600), overflow: TextOverflow.ellipsis),
-                            ),
-                          ),
                         ],
                       ),
                     ),
                     ElevatedButton.icon(
-                      onPressed: () {},
+                      onPressed: onMarkComplete,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF0E796A),
                         foregroundColor: Colors.white,

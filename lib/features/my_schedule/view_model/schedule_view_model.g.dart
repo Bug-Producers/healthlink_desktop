@@ -6,49 +6,21 @@ part of 'schedule_view_model.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-// GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: type=lint, type=warning
+String _$scheduleViewModelHash() => r'2b51e5aefb400a1d924a07a269f01aa2ee2a623b';
 
+/// See also [ScheduleViewModel].
 @ProviderFor(ScheduleViewModel)
-final scheduleViewModelProvider = ScheduleViewModelProvider._();
+final scheduleViewModelProvider = AutoDisposeAsyncNotifierProvider<
+    ScheduleViewModel, DoctorSchedule>.internal(
+  ScheduleViewModel.new,
+  name: r'scheduleViewModelProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$scheduleViewModelHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
-final class ScheduleViewModelProvider
-    extends $AsyncNotifierProvider<ScheduleViewModel, DoctorSchedule> {
-  ScheduleViewModelProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'scheduleViewModelProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$scheduleViewModelHash();
-
-  @$internal
-  @override
-  ScheduleViewModel create() => ScheduleViewModel();
-}
-
-String _$scheduleViewModelHash() => r'305efd6a4f672935eb051009f840c7face9e5998';
-
-abstract class _$ScheduleViewModel extends $AsyncNotifier<DoctorSchedule> {
-  FutureOr<DoctorSchedule> build();
-  @$mustCallSuper
-  @override
-  void runBuild() {
-    final ref = this.ref as $Ref<AsyncValue<DoctorSchedule>, DoctorSchedule>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<AsyncValue<DoctorSchedule>, DoctorSchedule>,
-              AsyncValue<DoctorSchedule>,
-              Object?,
-              Object?
-            >;
-    element.handleCreate(ref, build);
-  }
-}
+typedef _$ScheduleViewModel = AutoDisposeAsyncNotifier<DoctorSchedule>;
+// ignore_for_file: type=lint
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

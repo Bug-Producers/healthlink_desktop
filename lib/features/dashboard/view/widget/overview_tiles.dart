@@ -1,14 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
+/// [OverViewTiles] is a reusable metric card used to display key clinical 
+/// statistics on the dashboard.
 class OverViewTiles extends StatelessWidget {
+  /// The descriptive label for the metric (e.g., "TOTAL REVENUE").
   final String title;
+  /// The icon representing the metric category.
   final IconData icon;
+  /// The primary numeric or text value to display.
   final String value;
+  /// A secondary label providing context (e.g., "Patients").
   final String subtitle;
+  /// The color of the icon.
   final Color iconColor;
+  /// The background color of the icon's container.
   final Color iconBackgroundColor;
 
+  /// Constructs an [OverViewTiles] card.
+  /// 
+  /// @param title The metric title.
+  /// @param icon The category icon.
+  /// @param value The primary value.
+  /// @param subtitle The contextual subtitle.
+  /// @param iconColor The icon's foreground color.
+  /// @param iconBackgroundColor The icon's background color.
   const OverViewTiles({
     super.key,
     required this.title,
@@ -23,7 +39,6 @@ class OverViewTiles extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      // Use ResponsiveValue for height to adapt better on smaller screens while keeping constraints.
       height: ResponsiveValue(
         context,
         defaultValue: 156.0,
@@ -37,7 +52,7 @@ class OverViewTiles extends StatelessWidget {
         borderRadius: const BorderRadius.all(Radius.circular(12)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),

@@ -1,80 +1,108 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/utils/error_handler.dart';
 import '../../view_model/appointments_view_model.dart';
 import 'record_payment_dialog.dart';
+import 'patient_history_dialog.dart';
 
-/// A data model representing a single appointment.
-///
-/// Contains information about the patient, time, and current status of the
-/// scheduled appointment.
+/// [AppointmentData] is a localized UI model used to map API results to 
+/// the display requirements of the [AppointmentsListWidget].
 class AppointmentData {
-  /// The full name of the patient.
   final String name;
-
-  /// A unique identifier for the appointment.
   final String id;
-
-  /// An optional URL pointing to the patient's avatar image.
+  final String? patientId;
   final String? avatarUrl;
-
-  /// The initials of the patient, used as a fallback if [avatarUrl] is null.
   final String initials;
-
-  /// The formatted date of the appointment.
   final String date;
-
-  /// The formatted time of the appointment.
   final String time;
-
-  /// The current status (e.g., "Upcoming", "Completed", "Cancelled").
   final String status;
-
-  /// Indicates if the appointment record should be visually crossed out.
   final bool isCrossedOut;
+  final int statusCode;
 
-  /// Constructs an [AppointmentData] instance.
-  ///
+  /// Constructs [AppointmentData].
+  /// 
   /// @param name The patient's full name.
-  /// @param id The unique appointment ID.
-  /// @param avatarUrl Optional image URL.
-  /// @param initials Fallback text for the avatar.
-  /// @param date Appointment date.
-  /// @param time Appointment time.
-  /// @param status The appointment status.
-  /// @param isCrossedOut Whether the item is crossed out (defaults to false).
+  /// @param id The unique appointment identifier.
+  /// @param patientId The patient's UID.
+  /// @param avatarUrl Link to the patient's profile image.
+  /// @param initials Fallback initials for the avatar.
+  /// @param date The scheduled date string.
+  /// @param time The formatted time range string.
+  /// @param status The human-readable status text.
+  /// @param isCrossedOut Whether the row should appear as cancelled.
+  /// @param statusCode The raw status code from the API.
   AppointmentData({
     required this.name,
     required this.id,
+    this.patientId,
     this.avatarUrl,
     required this.initials,
     required this.date,
     required this.time,
     required this.status,
     this.isCrossedOut = false,
+    this.statusCode = 0,
   });
 }
 
-/// A stateful-like widget that displays a table of recent appointments.
+/// [AppointmentsListWidget] renders a premium, interactive data table 
+/// of all clinical appointments.
 ///
-/// This widget handles rendering a responsive [DataTable] showing patient details,
-/// schedules, statuses, and contextual actions.
-///
-/// @param key The widget key.
+/// It supports real-time status transitions (Upcoming -> Completed), 
+/// financial recording, and seamless navigation to patient medical histories.
 class AppointmentsListWidget extends ConsumerWidget {
-  /// Constructs the [AppointmentsListWidget].
+  /// Constructs an [AppointmentsListWidget].
+  /// 
+  /// @param key The widget key.
   const AppointmentsListWidget({super.key});
 
-  /// Builds the table wrapper and the data table itself.
-  ///
-  /// @param context The build context.
-  /// @return A container with a horizontally scrollable table.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appointmentsState = ref.watch(appointmentsViewModelProvider);
 
     return appointmentsState.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (err, stack) => Center(child: Text('Error: $err')),
+      loading: () => const Center(
+        child: Padding(
+          padding: EdgeInsets.all(48),
+          child: CircularProgressIndicator(color: Color(0xFF006D60)),
+        ),
+      ),
+      error: (err, _) => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(48),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFEBEE),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Icon(Icons.cloud_off_outlined, size: 40, color: Color(0xFFD32F2F)),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                ErrorHandler.getMessage(err),
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Color(0xFF5a6362), fontSize: 14),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () => ref.invalidate(appointmentsViewModelProvider),
+                icon: const Icon(Icons.refresh, size: 18),
+                label: const Text('Retry', style: TextStyle(fontWeight: FontWeight.w700)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF006D60),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
       data: (appointments) {
         final List<AppointmentData> listData = appointments.map((apt) {
           String statusStr = "Upcoming";
@@ -84,70 +112,91 @@ class AppointmentsListWidget extends ConsumerWidget {
           return AppointmentData(
             name: apt.patientName ?? "Unknown",
             id: apt.id,
+            patientId: apt.patientId,
             avatarUrl: apt.patientImage,
-            initials: (apt.patientName != null && apt.patientName!.isNotEmpty) 
-                ? apt.patientName![0] 
+            initials: (apt.patientName != null && apt.patientName!.isNotEmpty)
+                ? apt.patientName![0]
                 : "?",
             date: apt.date,
             time: "${apt.startTime} - ${apt.endTime}",
             status: statusStr,
             isCrossedOut: apt.status == 2,
+            statusCode: apt.status,
           );
         }).toList();
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: const BorderRadius.all(Radius.circular(25)),
-      ),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minWidth: constraints.maxWidth),
-              child: Theme(
-                data: Theme.of(context).copyWith(
-                  dividerColor: const Color(0XFFF1F4F5),
+        if (listData.isEmpty) {
+          return Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(48),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(25),
+            ),
+            child: Column(
+              children: [
+                Icon(Icons.event_note_outlined, size: 48, color: const Color(0xFF006D60).withValues(alpha: 0.5)),
+                const SizedBox(height: 16),
+                const Text(
+                  'No appointments yet',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Color(0xFF5a6362)),
                 ),
-                child: DataTable(
-                  headingRowColor: WidgetStateProperty.all(Color(0XFFf2f4f6)),
-                  horizontalMargin: 24,
-                  columnSpacing: 40,
-                  headingRowHeight: 56,
-                  dataRowMinHeight: 72,
-                  dataRowMaxHeight: 88,
-                  headingTextStyle: const TextStyle(
-                    color: Color(0XFF5a6362),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1.5,
-                  ),
-                  columns: const [
-                    DataColumn(label: Text("PATIENT")),
-                    DataColumn(label: Text("DATE")),
-                    DataColumn(label: Text("ASSIGNED TIME")),
-                    DataColumn(label: Text("STATUS")),
-                    DataColumn(label: Text("ACTIONS")),
-                  ],
-                  rows: listData.map((data) => _buildRow(context, data)).toList(),
-                ),
-              ),
+              ],
             ),
           );
-        },
-      ),
-    );
+        }
+
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(25)),
+          ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minWidth: constraints.maxWidth),
+                  child: Theme(
+                    data: Theme.of(context).copyWith(dividerColor: const Color(0XFFF1F4F5)),
+                    child: DataTable(
+                      headingRowColor: WidgetStateProperty.all(const Color(0XFFf2f4f6)),
+                      horizontalMargin: 24,
+                      columnSpacing: 40,
+                      headingRowHeight: 56,
+                      dataRowMinHeight: 72,
+                      dataRowMaxHeight: 88,
+                      headingTextStyle: const TextStyle(
+                        color: Color(0XFF5a6362),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.5,
+                      ),
+                      columns: const [
+                        DataColumn(label: Text("PATIENT")),
+                        DataColumn(label: Text("DATE")),
+                        DataColumn(label: Text("ASSIGNED TIME")),
+                        DataColumn(label: Text("STATUS")),
+                        DataColumn(label: Text("ACTIONS")),
+                      ],
+                      rows: listData.map((data) => _buildRow(context, ref, data)).toList(),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        );
       },
     );
   }
 
-  /// Builds a single data row for the table.
-  ///
-  /// @param context The build context used for generating dialogs.
-  /// @param data The [AppointmentData] to populate the row.
-  /// @return A configured [DataRow] for the data table.
-  DataRow _buildRow(BuildContext context, AppointmentData data) {
+  /// Constructs a single data row for the table.
+  /// 
+  /// @param context The build context.
+  /// @param ref The widget ref.
+  /// @param data The localized appointment data.
+  /// @return A configured [DataRow].
+  DataRow _buildRow(BuildContext context, WidgetRef ref, AppointmentData data) {
     final textStyle = TextStyle(
       color: data.isCrossedOut ? const Color(0XFF8e9998) : Colors.black,
       fontSize: 15,
@@ -167,11 +216,7 @@ class AppointmentsListWidget extends ConsumerWidget {
                 child: data.avatarUrl == null
                     ? Text(
                         data.initials,
-                        style: const TextStyle(
-                          color: Color(0XFF3d4947),
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14,
-                        ),
+                        style: const TextStyle(color: Color(0XFF3d4947), fontWeight: FontWeight.w700, fontSize: 14),
                       )
                     : null,
               ),
@@ -180,12 +225,9 @@ class AppointmentsListWidget extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(data.name, style: textStyle),
                   Text(
-                    data.name,
-                    style: textStyle,
-                  ),
-                  Text(
-                    "ID: ${data.id}",
+                    "ID: ${data.id.length > 10 ? '${data.id.substring(0, 10)}...' : data.id}",
                     style: TextStyle(
                       color: const Color(0XFF8e9998),
                       fontSize: 13,
@@ -201,18 +243,15 @@ class AppointmentsListWidget extends ConsumerWidget {
         DataCell(Text(data.date, style: textStyle)),
         DataCell(Text(data.time, style: textStyle)),
         DataCell(_buildStatusBadge(data.status)),
-        DataCell(_buildActions(context, data.status)),
+        DataCell(_buildActions(context, ref, data)),
       ],
     );
   }
 
-  /// Generates a styled badge representing the current status.
-  ///
-  /// Styles the badge with dynamic background colors, text colors, and indicators
-  /// depending on whether the status is "Upcoming", "Completed", or "Cancelled".
-  ///
-  /// @param status The string representing the appointment status.
-  /// @return A decorated container rendering the status visually.
+  /// Builds a stylized status badge.
+  /// 
+  /// @param status The human-readable status string.
+  /// @return A configured [Widget].
   Widget _buildStatusBadge(String status) {
     Color bgColor;
     Color textColor;
@@ -220,17 +259,17 @@ class AppointmentsListWidget extends ConsumerWidget {
 
     switch (status) {
       case "Upcoming":
-        bgColor = const Color(0XFFE8ECEF); // Light grey
+        bgColor = const Color(0XFFE8ECEF);
         textColor = const Color(0XFF3d4947);
         hasDot = true;
         break;
       case "Completed":
-        bgColor = const Color(0XFFE0F2F1); // Light green
-        textColor = const Color(0XFF006D60); // Dark green
+        bgColor = const Color(0XFFE0F2F1);
+        textColor = const Color(0XFF006D60);
         break;
       case "Cancelled":
-        bgColor = const Color(0XFFFFEBEE); // Light red
-        textColor = const Color(0XFFD32F2F); // Dark red
+        bgColor = const Color(0XFFFFEBEE);
+        textColor = const Color(0XFFD32F2F);
         break;
       default:
         bgColor = const Color(0XFFE8ECEF);
@@ -239,74 +278,76 @@ class AppointmentsListWidget extends ConsumerWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(20),
-      ),
+      decoration: BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(20)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (hasDot) ...[
-            Container(
-              width: 6,
-              height: 6,
-              decoration: const BoxDecoration(
-                color: Color(0XFF1976D2), // Blue dot
-                shape: BoxShape.circle,
-              ),
-            ),
+            Container(width: 6, height: 6, decoration: const BoxDecoration(color: Color(0XFF1976D2), shape: BoxShape.circle)),
             const SizedBox(width: 6),
           ],
-          Text(
-            status,
-            style: TextStyle(
-              color: textColor,
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          Text(status, style: TextStyle(color: textColor, fontSize: 13, fontWeight: FontWeight.w600)),
         ],
       ),
     );
   }
 
-  /// Generates action buttons for an appointment based on its status.
-  ///
-  /// "Completed" appointments receive a "Record payment" button.
-  /// "Upcoming" appointments receive a "Mark Completed" button.
-  /// All statuses have a generic "View History" button.
-  ///
-  /// @param context The build context used for rendering action modals.
-  /// @param status The current status string.
-  /// @return A row containing relevant action buttons.
-  Widget _buildActions(BuildContext context, String status) {
+  /// Orchestrates the action buttons based on the appointment state.
+  /// 
+  /// @param context The build context.
+  /// @param ref The widget ref.
+  /// @param data The appointment data.
+  /// @return A row of context-aware action buttons.
+  Widget _buildActions(BuildContext context, WidgetRef ref, AppointmentData data) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        // View History — always available
         TextButton(
-          onPressed: () {},
+          onPressed: () {
+            if (data.patientId == null || data.patientId!.isEmpty) {
+              ErrorHandler.showWarning(context, 'Patient ID not available for this appointment.');
+              return;
+            }
+            showDialog(
+              context: context,
+              builder: (ctx) => PatientHistoryDialog(
+                patientId: data.patientId!,
+                patientName: data.name,
+              ),
+            );
+          },
           style: TextButton.styleFrom(
             foregroundColor: const Color(0XFF006D60),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           ),
-          child: Text(
-            status == "Cancelled" ? "View History" : "View\nHistory",
+          child: const Text(
+            "View\nHistory",
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, height: 1.2),
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, height: 1.2),
           ),
         ),
-        if (status == "Upcoming") ...[
+
+        // Mark Completed — for Upcoming appointments
+        if (data.status == "Upcoming") ...[
           const SizedBox(width: 12),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () async {
+              try {
+                await ref.read(appointmentsViewModelProvider.notifier).updateStatus(data.id, 1);
+                if (context.mounted) {
+                  ErrorHandler.showSuccess(context, '${data.name}\'s appointment marked as completed.');
+                }
+              } catch (e) {
+                if (context.mounted) ErrorHandler.showError(context, e);
+              }
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0XFF006D60),
               foregroundColor: Colors.white,
               elevation: 0,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
             child: const Text(
               "Mark\nCompleted",
@@ -314,13 +355,20 @@ class AppointmentsListWidget extends ConsumerWidget {
               style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, height: 1.2),
             ),
           ),
-        ] else if (status == "Completed") ...[
+        ]
+
+        // Record Payment — for Completed appointments
+        else if (data.status == "Completed") ...[
           const SizedBox(width: 12),
           ElevatedButton(
             onPressed: () {
               showDialog(
                 context: context,
-                builder: (context) => const RecordPaymentDialog(),
+                builder: (ctx) => RecordPaymentDialog(
+                  patientId: data.patientId ?? '',
+                  appointmentId: data.id,
+                  patientName: data.name,
+                ),
               );
             },
             style: ElevatedButton.styleFrom(
@@ -328,9 +376,7 @@ class AppointmentsListWidget extends ConsumerWidget {
               foregroundColor: Colors.white,
               elevation: 0,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
             child: const Text(
               "Record\npayment",
@@ -338,7 +384,7 @@ class AppointmentsListWidget extends ConsumerWidget {
               style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, height: 1.2),
             ),
           ),
-        ]
+        ],
       ],
     );
   }

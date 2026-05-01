@@ -1,0 +1,62 @@
+import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../models/models.dart';
+import '../network/api_client.dart';
+
+part 'patient_repository.g.dart';
+
+/// The [PatientRepository] facilitates access to patient data and medical records.
+class PatientRepository {
+  /// The HTTP client for network interactions.
+  final Dio _dio;
+
+  /// Initializes the repository with a Dio client.
+  /// 
+  /// @param _dio The Dio instance.
+  PatientRepository(this._dio);
+
+  /// Retrieves basic identity and profile data for a specific patient.
+  /// 
+  /// @param patientId The unique patient UID.
+  /// @return A [Future] resolving to [PatientInfo].
+  Future<PatientInfo> getPatient(String patientId) async {
+    final response = await _dio.get('/api/patients/$patientId');
+    return PatientInfo.fromJson(response.data);
+  }
+
+  /// Fetches the chronological medical history of a patient.
+  /// 
+  /// @param patientId The UID of the patient whose history is being requested.
+  /// @return A [Future] resolving to a [List] of [PatientHistory] entries.
+  Future<List<PatientHistory>> getPatientHistory(String patientId) async {
+    final response = await _dio.get(
+      '/api/patients/history',
+      queryParameters: {'patientId': patientId},
+    );
+    final data = response.data as List;
+    return data.map((e) => PatientHistory.fromJson(e)).toList();
+  }
+
+  /// Appends a new medical report or diagnosis to the patient's records.
+  /// 
+  /// @param patientId The UID of the patient.
+  /// @param report The text content of the report (diagnosis/prescription).
+  /// @return A [Future] that completes when the report is added.
+  Future<void> addPatientReport(String patientId, String report) async {
+    await _dio.post('/api/patients/history', data: {
+      'patientId': patientId,
+      'report': report,
+    });
+  }
+}
+
+/// Provider for the [PatientRepository].
+/// 
+/// @param ref The Riverpod [Ref].
+/// @return A new instance of [PatientRepository].
+@riverpod
+PatientRepository patientRepository(Ref ref) {
+  final dio = ref.watch(apiClientProvider);
+  return PatientRepository(dio);
+}

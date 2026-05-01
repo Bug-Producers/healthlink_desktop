@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 
+/// [FinancialsHeaderWidget] provides the contextual title and descriptive 
+/// summary for the Financial Hub screen.
 class FinancialsHeaderWidget extends StatelessWidget {
+  /// Constructs a [FinancialsHeaderWidget].
+  /// 
+  /// @param key The widget key.
   const FinancialsHeaderWidget({super.key});
 
   @override

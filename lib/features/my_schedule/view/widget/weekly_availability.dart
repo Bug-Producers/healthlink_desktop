@@ -1,85 +1,127 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import '../../../../core/utils/error_handler.dart';
+import '../../view_model/schedule_view_model.dart';
 import 'custom_time_range_picker.dart';
 
-class WeeklyAvailabilityWidget extends StatefulWidget {
+/// [WeeklyAvailabilityWidget] manages the interactive weekly calendar for a doctor.
+///
+/// It allows for granular control over clinical hours, supporting multiple 
+/// non-contiguous time slots per day. The widget manages its own local 
+/// editing state to allow for bulk updates via the [ScheduleHeaderWidget].
+class WeeklyAvailabilityWidget extends ConsumerStatefulWidget {
+  /// Constructs a [WeeklyAvailabilityWidget].
+  /// 
+  /// @param key The widget key.
   const WeeklyAvailabilityWidget({super.key});
 
   @override
-  State<WeeklyAvailabilityWidget> createState() => _WeeklyAvailabilityWidgetState();
+  ConsumerState<WeeklyAvailabilityWidget> createState() => WeeklyAvailabilityWidgetState();
 }
 
-class _WeeklyAvailabilityWidgetState extends State<WeeklyAvailabilityWidget> {
-  final Map<String, bool> _activeDays = {
-    "Monday": true,
-    "Tuesday": true,
-    "Wednesday": false,
-    "Thursday": true,
-    "Friday": true,
-    "Saturday": false,
-    "Sunday": false,
-  };
-
-  final Map<String, List<String>> _timeRanges = {
-    "Monday": ["09:00 - 12:00", "14:00 - 18:00"],
-    "Tuesday": ["09:00 - 15:00"],
-    "Wednesday": [],
-    "Thursday": ["09:00 - 15:00"],
-    "Friday": ["09:00 - 12:00"],
-    "Saturday": [],
-    "Sunday": [],
-  };
+/// State for [WeeklyAvailabilityWidget], exposing its local schedule data to parents.
+class WeeklyAvailabilityWidgetState extends ConsumerState<WeeklyAvailabilityWidget> {
+  Map<String, bool> _activeDays = {};
+  Map<String, List<String>> _timeRanges = {};
+  bool _loaded = false;
 
   final List<String> _daysOfWeek = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday"
+    "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"
   ];
+
+  final Map<String, String> _dayLabels = {
+    "monday": "Monday", "tuesday": "Tuesday", "wednesday": "Wednesday",
+    "thursday": "Thursday", "friday": "Friday", "saturday": "Saturday", "sunday": "Sunday",
+  };
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+    final scheduleState = ref.watch(scheduleViewModelProvider);
+
+    // Initialize local state from API data once
+    scheduleState.whenData((schedule) {
+      if (!_loaded) {
+        _loaded = true;
+        final avail = schedule.availability;
+        for (final day in _daysOfWeek) {
+          final slots = avail[day] ?? [];
+          _activeDays[day] = slots.isNotEmpty;
+          _timeRanges[day] = slots.map((s) => "${s.startTime} - ${s.endTime}").toList();
+        }
+      }
+    });
+
+    return scheduleState.when(
+      loading: () => const Center(
+        child: Padding(padding: EdgeInsets.all(48), child: CircularProgressIndicator(color: Color(0xFF006D60))),
       ),
-      padding: const EdgeInsets.all(32),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "WEEKLY AVAILABILITY",
-            style: TextStyle(
-              color: Color(0XFF5a6362),
-              fontSize: 12,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 1.5,
-            ),
-          ),
-          const SizedBox(height: 24),
-          const Divider(height: 1, color: Color(0XFFe8ecef)),
-          const SizedBox(height: 24),
-          
-          ..._daysOfWeek.map((day) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: _buildDayRow(
-                context: context,
-                day: day,
-                isActive: _activeDays[day] ?? false,
-                timeRanges: _timeRanges[day] ?? [],
+      error: (err, _) => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(48),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(ErrorHandler.getMessage(err), style: const TextStyle(color: Color(0xFF5a6362))),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () { _loaded = false; ref.invalidate(scheduleViewModelProvider); },
+                child: const Text('Retry'),
               ),
-            );
-          }).toList(),
-        ],
+            ],
+          ),
+        ),
+      ),
+      data: (_) => Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "WEEKLY AVAILABILITY",
+              style: TextStyle(color: Color(0XFF5a6362), fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1.5),
+            ),
+            const SizedBox(height: 24),
+            const Divider(height: 1, color: Color(0XFFe8ecef)),
+            const SizedBox(height: 24),
+            ..._daysOfWeek.map((day) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: _buildDayRow(
+                  context: context,
+                  day: day,
+                  isActive: _activeDays[day] ?? false,
+                  timeRanges: _timeRanges[day] ?? [],
+                ),
+              );
+            }),
+          ],
+        ),
       ),
     );
   }
 
+  /// Exports the currently edited schedule map.
+  /// 
+  /// @return A [Map] of days to their assigned time range strings.
+  Map<String, List<String>> get currentSchedule => Map.from(_timeRanges);
+  
+  /// Exports the currently toggled active state of each day.
+  /// 
+  /// @return A [Map] of days to their enabled status.
+  Map<String, bool> get currentActiveDays => Map.from(_activeDays);
+
+  /// Builds a row representing a single day's schedule.
+  /// 
+  /// @param context The build context.
+  /// @param day The technical day key.
+  /// @param isActive Whether the day is currently enabled.
+  /// @param timeRanges List of existing time ranges.
+  /// @return A responsive row widget.
   Widget _buildDayRow({
     required BuildContext context,
     required String day,
@@ -88,10 +130,7 @@ class _WeeklyAvailabilityWidgetState extends State<WeeklyAvailabilityWidget> {
   }) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Use local available width instead of global screen width.
-        // This makes the widget perfectly responsive even inside split-screens or sidebars.
         final isDesktop = constraints.maxWidth > 350;
-
         return Container(
           decoration: BoxDecoration(
             color: const Color(0XFFF8F9FB),
@@ -111,11 +150,10 @@ class _WeeklyAvailabilityWidgetState extends State<WeeklyAvailabilityWidget> {
                       child: SizedBox(
                         width: 100,
                         child: Text(
-                          day,
+                          _dayLabels[day] ?? day,
                           style: TextStyle(
                             color: isActive ? Colors.black : const Color(0XFFa0a7a6),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
+                            fontSize: 16, fontWeight: FontWeight.w700,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -145,8 +183,7 @@ class _WeeklyAvailabilityWidgetState extends State<WeeklyAvailabilityWidget> {
                 rowFlex: isDesktop ? 1 : null,
                 child: isActive
                     ? Wrap(
-                        spacing: 12,
-                        runSpacing: 12,
+                        spacing: 12, runSpacing: 12,
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           ...timeRanges.map((time) => _buildTimeChip(day, time)),
@@ -155,12 +192,7 @@ class _WeeklyAvailabilityWidgetState extends State<WeeklyAvailabilityWidget> {
                       )
                     : const Text(
                         "Unavailable",
-                        style: TextStyle(
-                          color: Color(0XFFa0a7a6),
-                          fontSize: 15,
-                          fontStyle: FontStyle.italic,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: TextStyle(color: Color(0XFFa0a7a6), fontSize: 15, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500),
                       ),
               ),
             ],
@@ -170,6 +202,11 @@ class _WeeklyAvailabilityWidgetState extends State<WeeklyAvailabilityWidget> {
     );
   }
 
+  /// Renders a removable time slot chip.
+  /// 
+  /// @param day The parent day.
+  /// @param time The time range string.
+  /// @return A stylized chip widget.
   Widget _buildTimeChip(String day, String time) {
     return Container(
       decoration: BoxDecoration(
@@ -182,34 +219,23 @@ class _WeeklyAvailabilityWidgetState extends State<WeeklyAvailabilityWidget> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Flexible(
-            child: Text(
-              time,
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
+            child: Text(time, style: const TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w600), overflow: TextOverflow.ellipsis),
           ),
           const SizedBox(width: 12),
           InkWell(
-            onTap: () {
-              setState(() {
-                _timeRanges[day]?.remove(time);
-              });
-            },
-            child: const Icon(
-              Icons.close,
-              size: 16,
-              color: Color(0XFF5a6362),
-            ),
+            onTap: () => setState(() => _timeRanges[day]?.remove(time)),
+            child: const Icon(Icons.close, size: 16, color: Color(0XFF5a6362)),
           ),
         ],
       ),
     );
   }
 
+  /// Builds a button to trigger the time range picker.
+  /// 
+  /// @param context The build context.
+  /// @param day The target day.
+  /// @return An interactive button widget.
   Widget _buildAddButton(BuildContext context, String day) {
     return InkWell(
       onTap: () async {
@@ -218,9 +244,7 @@ class _WeeklyAvailabilityWidgetState extends State<WeeklyAvailabilityWidget> {
           builder: (context) => const CustomTimeRangePickerDialog(),
         );
         if (result != null) {
-          setState(() {
-            _timeRanges[day]?.add(result);
-          });
+          setState(() => _timeRanges[day]?.add(result));
         }
       },
       borderRadius: BorderRadius.circular(8),
@@ -231,22 +255,12 @@ class _WeeklyAvailabilityWidgetState extends State<WeeklyAvailabilityWidget> {
           border: Border.all(color: const Color(0XFF006D60), width: 1.5),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Row(
+        child: const Row(
           mainAxisSize: MainAxisSize.min,
-          children: const [
+          children: [
             Icon(Icons.add, size: 16, color: Color(0XFF006D60)),
             SizedBox(width: 8),
-            Flexible(
-              child: Text(
-                "Add Time",
-                style: TextStyle(
-                  color: Color(0XFF006D60),
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
+            Flexible(child: Text("Add Time", style: TextStyle(color: Color(0XFF006D60), fontSize: 15, fontWeight: FontWeight.w700), overflow: TextOverflow.ellipsis)),
           ],
         ),
       ),

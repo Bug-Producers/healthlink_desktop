@@ -2,8 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:healthlink_desktop/features/navigation/view/screen/navigation_screen.dart';
 import 'package:healthlink_desktop/features/signup/view/screen/signup_screen.dart';
+import '../../../../core/repositories/doctor_repository.dart';
+import '../../../../core/utils/error_handler.dart';
 import '../../view_model/auth_view_model.dart';
 
+/// The login form widget with Firebase authentication and doctor verification.
+///
+/// After Firebase login, calls POST /api/is-it-doctor to confirm the
+/// authenticated user is a registered doctor before allowing access.
 class LoginFormWidget extends ConsumerStatefulWidget {
   const LoginFormWidget({super.key});
 
@@ -15,6 +21,7 @@ class _LoginFormWidgetState extends ConsumerState<LoginFormWidget> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
@@ -27,6 +34,7 @@ class _LoginFormWidgetState extends ConsumerState<LoginFormWidget> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        // Email field
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -65,6 +73,7 @@ class _LoginFormWidgetState extends ConsumerState<LoginFormWidget> {
         
         const SizedBox(height: 24),
         
+        // Password field
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -90,10 +99,7 @@ class _LoginFormWidgetState extends ConsumerState<LoginFormWidget> {
                   ),
                   child: const Text(
                     "Forgot Password?",
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
                   ),
                 ),
               ],
@@ -101,9 +107,17 @@ class _LoginFormWidgetState extends ConsumerState<LoginFormWidget> {
             const SizedBox(height: 8),
             TextFormField(
               controller: _passwordController,
-              obscureText: true,
+              obscureText: _obscurePassword,
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.lock_outline, color: Color(0XFFa5b0b5), size: 20),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                    color: const Color(0XFFa5b0b5),
+                    size: 20,
+                  ),
+                  onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                ),
                 hintText: "••••••••",
                 hintStyle: const TextStyle(color: Color(0XFFa5b0b5), letterSpacing: 4),
                 filled: true,
@@ -125,35 +139,11 @@ class _LoginFormWidgetState extends ConsumerState<LoginFormWidget> {
         
         const SizedBox(height: 48),
         
+        // Sign In button
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: _isLoading ? null : () async {
-              setState(() { _isLoading = true; });
-              try {
-                await ref.read(authViewModelProvider.notifier).login(
-                  _emailController.text, 
-                  _passwordController.text
-                );
-                if (mounted) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (context) => const NavigationScreen(),
-                    ),
-                  );
-                }
-              } catch (e) {
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Login failed: ${e.toString()}')),
-                  );
-                }
-              } finally {
-                if (mounted) {
-                  setState(() { _isLoading = false; });
-                }
-              }
-            },
+            onPressed: _isLoading ? null : _handleLogin,
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF006D60),
               foregroundColor: Colors.white,
@@ -166,8 +156,7 @@ class _LoginFormWidgetState extends ConsumerState<LoginFormWidget> {
               children: [
                 if (_isLoading)
                   const SizedBox(
-                    height: 20,
-                    width: 20,
+                    height: 20, width: 20,
                     child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                   )
                 else ...[
@@ -188,23 +177,58 @@ class _LoginFormWidgetState extends ConsumerState<LoginFormWidget> {
         TextButton(
           onPressed: () {
             Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) => const SignupScreen(),
-              ),
+              MaterialPageRoute(builder: (context) => const SignupScreen()),
             );
           },
-          style: TextButton.styleFrom(
-            foregroundColor: const Color(0xFF006D60),
-          ),
+          style: TextButton.styleFrom(foregroundColor: const Color(0xFF006D60)),
           child: const Text(
             "Create a new account",
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-            ),
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
           ),
         ),
       ],
     );
+  }
+
+  /// Handles the login flow: validate → Firebase login → doctor verification → navigate.
+  Future<void> _handleLogin() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    if (email.isEmpty || password.isEmpty) {
+      ErrorHandler.showWarning(context, 'Please enter your email and password.');
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    try {
+      // Step 1: Firebase authentication
+      await ref.read(authViewModelProvider.notifier).login(email, password);
+
+      // Step 2: Verify the user is a registered doctor
+      final doctorRepo = ref.read(doctorRepositoryProvider);
+      final user = ref.read(authViewModelProvider).value;
+      if (user != null) {
+        final isDoc = await doctorRepo.isDoctor(user.uid);
+        if (!isDoc) {
+          // Sign out if not a doctor
+          await ref.read(authViewModelProvider.notifier).logout();
+          if (mounted) {
+            ErrorHandler.showWarning(context, 'This account is not registered as a doctor.\nPlease use the patient app or create a doctor account.');
+          }
+          return;
+        }
+      }
+
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const NavigationScreen()),
+        );
+      }
+    } catch (e) {
+      if (mounted) ErrorHandler.showError(context, e);
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 }
