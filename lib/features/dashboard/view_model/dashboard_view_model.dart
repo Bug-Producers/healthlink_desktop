@@ -67,12 +67,22 @@ class DashboardViewModel extends _$DashboardViewModel {
       financialRepo.getRevenue(),
       doctorRepo.getRatings(),
       doctorRepo.getNotifications(),
+      financialRepo.getPayments(),
     ]);
+
+    final revenue = results[2] as RevenueData;
+    final payments = results[5] as List<Payment>;
+
+    // Calculate real total from payments for accuracy
+    final calculatedTotal = payments.fold(0.0, (sum, p) => sum + (p.amount ?? 0.0));
+    final finalRevenue = revenue.copyWith(
+      totalEarnings: revenue.totalEarnings! < calculatedTotal ? calculatedTotal : revenue.totalEarnings,
+    );
 
     return DashboardData(
       profile: results[0] as DoctorProfile,
       appointments: results[1] as List<Appointment>,
-      revenue: results[2] as RevenueData,
+      revenue: finalRevenue,
       ratings: results[3] as RatingsData,
       notifications: results[4] as List<SystemNotification>,
     );

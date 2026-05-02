@@ -49,16 +49,22 @@ class RevenueAnalyticsWidget extends ConsumerWidget {
         ),
         data: (data) {
           final revenue = data.revenue;
-          final breakdown = revenue.dailyBreakdown ?? [];
-          // Build chart spots
+          // Use payments directly to show sequential transaction amounts
+          final paymentsList = data.payments.reversed.toList();
           List<FlSpot> spots = [];
           double maxY = 1;
-          for (int i = 0; i < breakdown.length; i++) {
-            final t = breakdown[i].total ?? 0.0;
+
+          for (int i = 0; i < paymentsList.length; i++) {
+            final t = paymentsList[i].amount ?? 0.0;
             spots.add(FlSpot(i.toDouble(), t));
             if (t > maxY) maxY = t;
           }
-          if (spots.isEmpty) {
+
+          if (spots.length == 1) {
+            // Duplicate the point at x=1 to render a flat line without going out of bounds
+            final singleSpot = spots.first;
+            spots = [FlSpot(0, singleSpot.y), FlSpot(1, singleSpot.y)];
+          } else if (spots.isEmpty) {
             spots = [const FlSpot(0, 0), const FlSpot(1, 0)];
           }
 

@@ -147,7 +147,12 @@ class _RecordCashPaymentWidgetState extends ConsumerState<RecordCashPaymentWidge
 
     setState(() => _isLoading = true);
     try {
-      final payment = Payment(patientId: patientId, appointmentId: appointmentId, amount: amount);
+      final payment = Payment(
+        patientId: patientId,
+        appointmentId: appointmentId,
+        amount: amount,
+        date: DateTime.now().toIso8601String().split('T')[0], // YYYY-MM-DD
+      );
       await ref.read(financialsViewModelProvider.notifier).recordPayment(payment);
       if (mounted) {
         ErrorHandler.showSuccess(context, 'Payment of \$${amount.toStringAsFixed(2)} recorded.');

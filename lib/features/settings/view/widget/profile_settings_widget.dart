@@ -22,6 +22,7 @@ class _ProfileSettingsWidgetState extends ConsumerState<ProfileSettingsWidget> {
   final _cityController = TextEditingController();
   final _aboutController = TextEditingController();
   String? _profileImage;
+  bool _imageChanged = false;
   bool _initialized = false;
   bool _isSaving = false;
 
@@ -68,8 +69,10 @@ class _ProfileSettingsWidgetState extends ConsumerState<ProfileSettingsWidget> {
                   CircleAvatar(
                     radius: 50,
                     backgroundColor: const Color(0xFFF4F6F8),
-                    backgroundImage: ImageHelper.getImageProvider(_profileImage) ??
-                        const AssetImage('assets/360_F_396167959_aAhZiGlJoeXOBHivMvaO0Aloxvhg3eVT.jpg') as ImageProvider,
+                    backgroundImage: ImageHelper.getImageProvider(_profileImage),
+                    child: (_profileImage == null || _profileImage!.isEmpty) 
+                        ? const Icon(Icons.person, size: 50, color: Color(0XFF5a6362)) 
+                        : null,
                   ),
                   Positioned(
                     bottom: 0, right: 0,
@@ -113,7 +116,10 @@ class _ProfileSettingsWidgetState extends ConsumerState<ProfileSettingsWidget> {
                         const SizedBox(width: 16),
                         TextButton(
                           onPressed: () {
-                            setState(() => _profileImage = null);
+                            setState(() {
+                              _profileImage = '';
+                              _imageChanged = true;
+                            });
                           },
                           style: TextButton.styleFrom(
                             foregroundColor: const Color(0xFFD32F2F),
@@ -169,6 +175,7 @@ class _ProfileSettingsWidgetState extends ConsumerState<ProfileSettingsWidget> {
                       _cityController.text = currentData.profile.city ?? '';
                       _aboutController.text = currentData.profile.about ?? '';
                       _profileImage = currentData.profile.image;
+                      _imageChanged = false;
                     });
                   }
                   
@@ -240,13 +247,10 @@ class _ProfileSettingsWidgetState extends ConsumerState<ProfileSettingsWidget> {
         final bytes = await file.readAsBytes();
         final base64Image = base64Encode(bytes);
         
-        final repo = ref.read(doctorRepositoryProvider);
-        await repo.uploadProfileImage(base64Image);
-        
-        _initialized = false;
-        ref.invalidate(dashboardViewModelProvider);
-        
-        if (mounted) ErrorHandler.showSuccess(context, 'Profile image updated.');
+        setState(() {
+          _profileImage = base64Image;
+          _imageChanged = true;
+        });
       }
     } catch (e) {
       if (mounted) ErrorHandler.showError(context, e);
@@ -256,7 +260,18 @@ class _ProfileSettingsWidgetState extends ConsumerState<ProfileSettingsWidget> {
   Future<void> _handleSave() async {
     setState(() => _isSaving = true);
     try {
-      final profile = DoctorProfile(
+      if (_imageChanged) {
+        final repo = ref.read(doctorRepositoryProvider);
+        await repo.uploadProfileImage(_profileImage ?? '');
+        _imageChanged = false;
+      }
+
+      final currentData = ref.read(dashboardViewModelProvider).value;
+      if (currentData == null) {
+        throw Exception('Cannot update profile: Current data is not loaded.');
+      }
+
+      final profile = currentData.profile.copyWith(
         name: _nameController.text.trim(),
         city: _cityController.text.trim(),
         about: _aboutController.text.trim(),

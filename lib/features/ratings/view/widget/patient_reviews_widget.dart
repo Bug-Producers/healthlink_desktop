@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import '../../view_model/ratings_view_model.dart';
 import '../../../../core/utils/error_handler.dart';
 
@@ -40,13 +41,51 @@ class _PatientReviewsWidgetState extends ConsumerState<PatientReviewsWidget> {
       data: (data) {
         var reviews = List.of(data.ratings ?? []);
 
+        // Helper to parse dates for sorting
+        DateTime parseDate(String? dateStr) {
+          if (dateStr == null || dateStr.trim().isEmpty) return DateTime(1970);
+          final parsed = DateTime.tryParse(dateStr);
+          if (parsed != null) return parsed;
+          
+          // Try common date formats
+          final formats = [
+            'MM/dd/yyyy',
+            'dd/MM/yyyy',
+            'MMM dd, yyyy',
+            'MMMM dd, yyyy',
+            'dd MMM yyyy',
+          ];
+          
+          for (final format in formats) {
+            try {
+              return DateFormat(format).parseStrict(dateStr.trim());
+            } catch (_) {}
+          }
+          
+          // Fallback parsing for partial matches
+          try {
+            final months = {"Jan":1, "Feb":2, "Mar":3, "Apr":4, "May":5, "Jun":6, "Jul":7, "Aug":8, "Sep":9, "Oct":10, "Nov":11, "Dec":12};
+            for (var entry in months.entries) {
+              if (dateStr.contains(entry.key)) {
+                final yearStr = RegExp(r'\d{4}').firstMatch(dateStr)?.group(0);
+                final dayStr = RegExp(r'\b\d{1,2}\b').firstMatch(dateStr)?.group(0);
+                final year = int.tryParse(yearStr ?? '1970') ?? 1970;
+                final day = int.tryParse(dayStr ?? '1') ?? 1;
+                return DateTime(year, entry.value, day);
+              }
+            }
+          } catch (_) {}
+          
+          return DateTime(1970);
+        }
+
         // Sort based on filter
         switch (_selectedFilter) {
           case 'Newest First':
-            reviews.sort((a, b) => (b.date ?? '').compareTo(a.date ?? ''));
+            reviews.sort((a, b) => parseDate(b.date).compareTo(parseDate(a.date)));
             break;
           case 'Oldest First':
-            reviews.sort((a, b) => (a.date ?? '').compareTo(b.date ?? ''));
+            reviews.sort((a, b) => parseDate(a.date).compareTo(parseDate(b.date)));
             break;
           case 'Highest Rated':
             reviews.sort((a, b) => b.stars.compareTo(a.stars));

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/utils/error_handler.dart';
 import '../../../../core/utils/image_helper.dart';
 import '../../view_model/appointments_view_model.dart';
+import '../../../financials/view_model/financials_view_model.dart';
 import 'record_payment_dialog.dart';
 import 'patient_history_dialog.dart';
 
@@ -19,6 +20,7 @@ class AppointmentData {
   final String status;
   final bool isCrossedOut;
   final int statusCode;
+  final bool hasPayment;
 
   /// Constructs [AppointmentData].
   /// 
@@ -43,6 +45,7 @@ class AppointmentData {
     required this.status,
     this.isCrossedOut = false,
     this.statusCode = 0,
+    this.hasPayment = false,
   });
 }
 
@@ -60,6 +63,8 @@ class AppointmentsListWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appointmentsState = ref.watch(appointmentsViewModelProvider);
+    final financialsState = ref.watch(financialsViewModelProvider);
+    final paidAppointmentIds = financialsState.valueOrNull?.payments.map((p) => p.appointmentId).toSet() ?? {};
 
     return appointmentsState.when(
       loading: () => const Center(
@@ -123,6 +128,7 @@ class AppointmentsListWidget extends ConsumerWidget {
             status: statusStr,
             isCrossedOut: apt.status == 2,
             statusCode: apt.status,
+            hasPayment: paidAppointmentIds.contains(apt.id),
           );
         }).toList();
 
@@ -155,9 +161,11 @@ class AppointmentsListWidget extends ConsumerWidget {
           child: LayoutBuilder(
             builder: (context, constraints) {
               return SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minWidth: constraints.maxWidth),
-                  child: Theme(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minWidth: constraints.maxWidth),
+                    child: Theme(
                     data: Theme.of(context).copyWith(dividerColor: const Color(0XFFF1F4F5)),
                     child: DataTable(
                       headingRowColor: WidgetStateProperty.all(const Color(0XFFf2f4f6)),
@@ -182,6 +190,7 @@ class AppointmentsListWidget extends ConsumerWidget {
                       rows: listData.map((data) => _buildRow(context, ref, data)).toList(),
                     ),
                   ),
+                ),
                 ),
               );
             },
@@ -226,7 +235,11 @@ class AppointmentsListWidget extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(data.name, style: textStyle),
+                  Text(
+                    data.name, 
+                    style: textStyle,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   Text(
                     "ID: ${data.id.length > 10 ? '${data.id.substring(0, 10)}...' : data.id}",
                     style: TextStyle(
@@ -235,6 +248,7 @@ class AppointmentsListWidget extends ConsumerWidget {
                       fontWeight: FontWeight.w500,
                       decoration: data.isCrossedOut ? TextDecoration.lineThrough : null,
                     ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -358,8 +372,8 @@ class AppointmentsListWidget extends ConsumerWidget {
           ),
         ]
 
-        // Record Payment — for Completed appointments
-        else if (data.status == "Completed") ...[
+        // Record Payment — for Completed appointments that haven't been paid
+        else if (data.status == "Completed" && !data.hasPayment) ...[
           const SizedBox(width: 12),
           ElevatedButton(
             onPressed: () {

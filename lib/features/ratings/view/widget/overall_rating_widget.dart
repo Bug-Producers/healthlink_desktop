@@ -46,14 +46,17 @@ class OverallRatingWidget extends ConsumerWidget {
         ),
         data: (data) {
           final avg = data.averageRating ?? 0.0;
-          final total = data.totalRatings ?? 0;
+          final backendTotal = data.totalRatings ?? 0;
           final ratings = data.ratings ?? [];
 
           // Count distribution
           Map<int, int> dist = {5: 0, 4: 0, 3: 0, 2: 0, 1: 0};
+          int localTotal = 0;
           for (final r in ratings) {
             dist[r.stars] = (dist[r.stars] ?? 0) + 1;
+            localTotal++;
           }
+          final total = localTotal > backendTotal ? localTotal : backendTotal;
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,7 +120,7 @@ class OverallRatingWidget extends ConsumerWidget {
   /// @param color The visual color for the progress bar.
   /// @return A configured [Widget].
   Widget _buildRatingBar(String label, int count, int total, Color color) {
-    final double percentage = count / total;
+    final double percentage = (total > 0 ? (count / total) : 0.0).clamp(0.0, 1.0);
     return Row(
       children: [
         SizedBox(width: 50, child: Text(label, style: const TextStyle(color: Color(0XFF5a6362), fontSize: 14, fontWeight: FontWeight.w500))),
