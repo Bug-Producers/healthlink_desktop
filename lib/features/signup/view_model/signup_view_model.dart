@@ -25,21 +25,13 @@ class SignupViewModel extends _$SignupViewModel {
   /// @return A [Future] that completes when registration is successful.
   /// @throws Exception if either authentication or API registration fails.
   Future<void> signup(String email, String password, DoctorRegistration registration) async {
-    state = const AsyncValue.loading();
-    try {
-      final authRepo = ref.read(authRepositoryProvider);
-      final doctorRepo = ref.read(doctorRepositoryProvider);
+    final authRepo = ref.read(authRepositoryProvider);
+    final doctorRepo = ref.read(doctorRepositoryProvider);
 
-      // Stage 1: Firebase Authentication
-      await authRepo.createUser(email, password);
-      
-      // Stage 2: Backend Professional Registration
-      await doctorRepo.register(registration);
-      
-      state = const AsyncValue.data(null);
-    } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
-      rethrow;
-    }
+    // Stage 1: Firebase Authentication
+    await authRepo.createUser(email, password);
+    
+    // Stage 2: Backend Professional Registration
+    await doctorRepo.register(registration);
   }
 }

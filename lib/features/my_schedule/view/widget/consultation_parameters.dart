@@ -42,6 +42,13 @@ class ConsultationParametersWidgetState extends ConsumerState<ConsultationParame
     return int.tryParse(_bufferTime.replaceAll(' minutes', '')) ?? 10;
   }
 
+  /// Resets the local state to force a reload from the provider.
+  void resetState() {
+    setState(() {
+      _initialized = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final dashState = ref.watch(dashboardViewModelProvider);

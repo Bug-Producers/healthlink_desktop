@@ -1,3 +1,4 @@
+// ignore_for_file: invalid_annotation_target
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'models.freezed.dart';
@@ -9,7 +10,7 @@ part 'models.g.dart';
 @freezed
 abstract class DoctorProfile with _$DoctorProfile {
   const factory DoctorProfile({
-    String? id,
+    @JsonKey(name: 'uuid') String? id,
     String? name,
     String? city,
     String? country,
@@ -17,8 +18,8 @@ abstract class DoctorProfile with _$DoctorProfile {
     String? about,
     int? appointmentDuration,
     int? bufferTime,
-    String? image,
-    String? department,
+    @JsonKey(name: 'profileImage') String? image,
+    Map<String, dynamic>? department,
     int? expYears,
   }) = _DoctorProfile;
 
@@ -64,7 +65,7 @@ abstract class TimeSlot with _$TimeSlot {
 abstract class DoctorSchedule with _$DoctorSchedule {
   const factory DoctorSchedule({
     String? doctorId,
-    required Map<String, List<TimeSlot>> availability,
+    @Default({}) Map<String, List<TimeSlot>> availability,
   }) = _DoctorSchedule;
 
   factory DoctorSchedule.fromJson(Map<String, dynamic> json) => _$DoctorScheduleFromJson(json);
@@ -75,14 +76,14 @@ abstract class DoctorSchedule with _$DoctorSchedule {
 @freezed
 abstract class Appointment with _$Appointment {
   const factory Appointment({
-    required String id,
-    required String doctorId,
+    @Default('') String id,
+    @Default('') String doctorId,
     String? patientId,
     String? patientName,
     String? patientImage,
-    required String date,
-    required String startTime,
-    required String endTime,
+    @Default('') String date,
+    @Default('') String startTime,
+    @Default('') String endTime,
     @Default(0) int status,
   }) = _Appointment;
 
@@ -97,7 +98,7 @@ abstract class Payment with _$Payment {
     String? id,
     required String patientId,
     required String appointmentId,
-    required double amount,
+    double? amount,
     String? date,
   }) = _Payment;
 
@@ -109,8 +110,8 @@ abstract class Payment with _$Payment {
 @freezed
 abstract class DailyBreakdown with _$DailyBreakdown {
   const factory DailyBreakdown({
-    required String date,
-    required double total,
+    @Default('') String date,
+    double? total,
   }) = _DailyBreakdown;
 
   factory DailyBreakdown.fromJson(Map<String, dynamic> json) => _$DailyBreakdownFromJson(json);
@@ -121,9 +122,9 @@ abstract class DailyBreakdown with _$DailyBreakdown {
 @freezed
 abstract class RevenueData with _$RevenueData {
   const factory RevenueData({
-    @Default(0.0) double totalEarnings,
-    @Default(0) int totalPayments,
-    @Default([]) List<DailyBreakdown> dailyBreakdown,
+    @Default(0.0) double? totalEarnings,
+    @Default(0) int? totalPayments,
+    @Default([]) List<DailyBreakdown>? dailyBreakdown,
   }) = _RevenueData;
 
   factory RevenueData.fromJson(Map<String, dynamic> json) => _$RevenueDataFromJson(json);
@@ -134,8 +135,8 @@ abstract class RevenueData with _$RevenueData {
 @freezed
 abstract class SystemNotification with _$SystemNotification {
   const factory SystemNotification({
-    required String id,
-    required String message,
+    @Default('') String id,
+    @Default('') String message,
     @Default(false) bool read,
     String? date,
   }) = _SystemNotification;
@@ -164,9 +165,9 @@ abstract class Rating with _$Rating {
 @freezed
 abstract class RatingsData with _$RatingsData {
   const factory RatingsData({
-    @Default(0.0) double averageRating,
-    @Default(0) int totalRatings,
-    @Default([]) List<Rating> ratings,
+    @Default(0.0) double? averageRating,
+    @Default(0) int? totalRatings,
+    @Default([]) List<Rating>? ratings,
   }) = _RatingsData;
 
   factory RatingsData.fromJson(Map<String, dynamic> json) => _$RatingsDataFromJson(json);

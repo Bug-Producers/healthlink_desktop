@@ -7,6 +7,7 @@ import '../../../dashboard/view_model/dashboard_view_model.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/doctor_repository.dart';
 import '../../../../core/utils/error_handler.dart';
+import '../../../../core/utils/image_helper.dart';
 
 /// Profile settings widget with real API data and image upload.
 class ProfileSettingsWidget extends ConsumerStatefulWidget {
@@ -67,9 +68,8 @@ class _ProfileSettingsWidgetState extends ConsumerState<ProfileSettingsWidget> {
                   CircleAvatar(
                     radius: 50,
                     backgroundColor: const Color(0xFFF4F6F8),
-                    backgroundImage: _profileImage != null && _profileImage!.isNotEmpty
-                        ? NetworkImage(_profileImage!)
-                        : const AssetImage('assets/360_F_396167959_aAhZiGlJoeXOBHivMvaO0Aloxvhg3eVT.jpg') as ImageProvider,
+                    backgroundImage: ImageHelper.getImageProvider(_profileImage) ??
+                        const AssetImage('assets/360_F_396167959_aAhZiGlJoeXOBHivMvaO0Aloxvhg3eVT.jpg') as ImageProvider,
                   ),
                   Positioned(
                     bottom: 0, right: 0,
@@ -162,7 +162,19 @@ class _ProfileSettingsWidgetState extends ConsumerState<ProfileSettingsWidget> {
             children: [
               TextButton(
                 onPressed: () {
-                  _initialized = false;
+                  final currentData = ref.read(dashboardViewModelProvider).value;
+                  if (currentData != null) {
+                    setState(() {
+                      _nameController.text = currentData.profile.name ?? '';
+                      _cityController.text = currentData.profile.city ?? '';
+                      _aboutController.text = currentData.profile.about ?? '';
+                      _profileImage = currentData.profile.image;
+                    });
+                  }
+                  
+                  setState(() {
+                    _initialized = false;
+                  });
                   ref.invalidate(dashboardViewModelProvider);
                   ErrorHandler.showSuccess(context, 'Changes discarded.');
                 },

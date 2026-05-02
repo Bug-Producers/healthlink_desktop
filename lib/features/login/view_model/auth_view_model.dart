@@ -21,4 +21,12 @@ class AuthViewModel extends _$AuthViewModel {
     final repository = ref.read(authRepositoryProvider);
     await repository.signOut();
   }
+
+  /// Sends a password reset email via Firebase.
+  ///
+  /// @param email The email address to send the reset link to.
+  Future<void> resetPassword(String email) async {
+    final repository = ref.read(authRepositoryProvider);
+    await repository.sendPasswordReset(email);
+  }
 }

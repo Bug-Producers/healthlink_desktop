@@ -45,9 +45,9 @@ class OverallRatingWidget extends ConsumerWidget {
           ),
         ),
         data: (data) {
-          final avg = data.averageRating;
-          final total = data.totalRatings;
-          final ratings = data.ratings;
+          final avg = data.averageRating ?? 0.0;
+          final total = data.totalRatings ?? 0;
+          final ratings = data.ratings ?? [];
 
           // Count distribution
           Map<int, int> dist = {5: 0, 4: 0, 3: 0, 2: 0, 1: 0};

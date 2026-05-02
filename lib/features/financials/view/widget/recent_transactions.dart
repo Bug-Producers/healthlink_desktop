@@ -143,7 +143,7 @@ class RecentTransactionsWidget extends ConsumerWidget {
                                 ),
                                 DataCell(
                                   Text(
-                                    "\$${payment.amount.toStringAsFixed(2)}",
+                                    "\$${(payment.amount ?? 0).toStringAsFixed(2)}",
                                     style: const TextStyle(
                                       color: Colors.black,
                                       fontSize: 14,

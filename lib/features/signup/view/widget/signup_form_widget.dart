@@ -254,7 +254,9 @@ class _SignupFormWidgetState extends ConsumerState<SignupFormWidget> {
           MaterialPageRoute(builder: (context) => const NavigationScreen()),
         );
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('SIGNUP ERROR: $e');
+      debugPrint('STACK TRACE: $stackTrace');
       if (mounted) ErrorHandler.showError(context, e);
     } finally {
       if (mounted) setState(() => _isLoading = false);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/models/models.dart';
+import '../../../../core/utils/image_helper.dart';
 
 /// A card displaying the next patient waiting, with real appointment data.
 ///
@@ -92,9 +93,7 @@ class PatientWaitingCard extends StatelessWidget {
                     CircleAvatar(
                       radius: 38,
                       backgroundColor: const Color(0xFFE8ECEF),
-                      backgroundImage: appointment.patientImage != null && appointment.patientImage!.isNotEmpty
-                          ? NetworkImage(appointment.patientImage!)
-                          : null,
+                      backgroundImage: ImageHelper.getImageProvider(appointment.patientImage),
                       child: appointment.patientImage == null || appointment.patientImage!.isEmpty
                           ? Text(
                               initials,

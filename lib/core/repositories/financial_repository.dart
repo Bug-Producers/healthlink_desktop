@@ -19,6 +19,21 @@ class FinancialRepository {
   /// @param _dio The Dio instance configured with the API base URL and interceptors.
   FinancialRepository(this._dio);
 
+  Map<String, dynamic> _safeMap(dynamic e) {
+    if (e is Map<String, dynamic>) return e;
+    if (e is Map) return Map<String, dynamic>.from(e);
+    return {};
+  }
+
+  List _safeList(dynamic data, String key) {
+    if (data is List) return data;
+    if (data is Map && data.containsKey(key)) {
+      final val = data[key];
+      if (val is List) return val;
+    }
+    return [];
+  }
+
   /// Submits a new payment record to the backend.
   ///
   /// This is typically used to log cash transactions performed in-clinic.
@@ -27,7 +42,10 @@ class FinancialRepository {
   /// @return A [Future] that completes when the payment is successfully recorded.
   /// @throws [DioException] if the network request fails or the server returns an error.
   Future<void> recordPayment(Payment payment) async {
-    await _dio.post('/api/doctors/payments', data: payment.toJson());
+    await _dio.post(
+      '/api/doctors/payments',
+      data: payment.toJson(),
+    );
   }
 
   /// Retrieves a history of all payment transactions recorded by the doctor.
@@ -36,8 +54,8 @@ class FinancialRepository {
   /// @throws [DioException] if the server cannot be reached or returns a non-200 status.
   Future<List<Payment>> getPayments() async {
     final response = await _dio.get('/api/doctors/payments');
-    final data = response.data as List;
-    return data.map((e) => Payment.fromJson(e)).toList();
+    final data = _safeList(response.data, 'payments');
+    return data.map((e) => Payment.fromJson(_safeMap(e))).toList();
   }
 
   /// Fetches aggregated revenue metrics for the authenticated doctor.
@@ -48,7 +66,7 @@ class FinancialRepository {
   /// @throws [DioException] if the revenue data cannot be retrieved.
   Future<RevenueData> getRevenue() async {
     final response = await _dio.get('/api/doctors/revenue');
-    return RevenueData.fromJson(response.data);
+    return RevenueData.fromJson(_safeMap(response.data));
   }
 }
 

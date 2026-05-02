@@ -20,6 +20,7 @@ DoctorProfile _$DoctorProfileFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$DoctorProfile {
+  @JsonKey(name: 'uuid')
   String? get id => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
   String? get city => throw _privateConstructorUsedError;
@@ -28,8 +29,9 @@ mixin _$DoctorProfile {
   String? get about => throw _privateConstructorUsedError;
   int? get appointmentDuration => throw _privateConstructorUsedError;
   int? get bufferTime => throw _privateConstructorUsedError;
+  @JsonKey(name: 'profileImage')
   String? get image => throw _privateConstructorUsedError;
-  String? get department => throw _privateConstructorUsedError;
+  Map<String, dynamic>? get department => throw _privateConstructorUsedError;
   int? get expYears => throw _privateConstructorUsedError;
 
   /// Serializes this DoctorProfile to a JSON map.
@@ -49,7 +51,7 @@ abstract class $DoctorProfileCopyWith<$Res> {
       _$DoctorProfileCopyWithImpl<$Res, DoctorProfile>;
   @useResult
   $Res call(
-      {String? id,
+      {@JsonKey(name: 'uuid') String? id,
       String? name,
       String? city,
       String? country,
@@ -57,8 +59,8 @@ abstract class $DoctorProfileCopyWith<$Res> {
       String? about,
       int? appointmentDuration,
       int? bufferTime,
-      String? image,
-      String? department,
+      @JsonKey(name: 'profileImage') String? image,
+      Map<String, dynamic>? department,
       int? expYears});
 }
 
@@ -129,7 +131,7 @@ class _$DoctorProfileCopyWithImpl<$Res, $Val extends DoctorProfile>
       department: freezed == department
           ? _value.department
           : department // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as Map<String, dynamic>?,
       expYears: freezed == expYears
           ? _value.expYears
           : expYears // ignore: cast_nullable_to_non_nullable
@@ -147,7 +149,7 @@ abstract class _$$DoctorProfileImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String? id,
+      {@JsonKey(name: 'uuid') String? id,
       String? name,
       String? city,
       String? country,
@@ -155,8 +157,8 @@ abstract class _$$DoctorProfileImplCopyWith<$Res>
       String? about,
       int? appointmentDuration,
       int? bufferTime,
-      String? image,
-      String? department,
+      @JsonKey(name: 'profileImage') String? image,
+      Map<String, dynamic>? department,
       int? expYears});
 }
 
@@ -223,9 +225,9 @@ class __$$DoctorProfileImplCopyWithImpl<$Res>
           : image // ignore: cast_nullable_to_non_nullable
               as String?,
       department: freezed == department
-          ? _value.department
+          ? _value._department
           : department // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as Map<String, dynamic>?,
       expYears: freezed == expYears
           ? _value.expYears
           : expYears // ignore: cast_nullable_to_non_nullable
@@ -238,7 +240,7 @@ class __$$DoctorProfileImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$DoctorProfileImpl implements _DoctorProfile {
   const _$DoctorProfileImpl(
-      {this.id,
+      {@JsonKey(name: 'uuid') this.id,
       this.name,
       this.city,
       this.country,
@@ -246,14 +248,16 @@ class _$DoctorProfileImpl implements _DoctorProfile {
       this.about,
       this.appointmentDuration,
       this.bufferTime,
-      this.image,
-      this.department,
-      this.expYears});
+      @JsonKey(name: 'profileImage') this.image,
+      final Map<String, dynamic>? department,
+      this.expYears})
+      : _department = department;
 
   factory _$DoctorProfileImpl.fromJson(Map<String, dynamic> json) =>
       _$$DoctorProfileImplFromJson(json);
 
   @override
+  @JsonKey(name: 'uuid')
   final String? id;
   @override
   final String? name;
@@ -270,9 +274,18 @@ class _$DoctorProfileImpl implements _DoctorProfile {
   @override
   final int? bufferTime;
   @override
+  @JsonKey(name: 'profileImage')
   final String? image;
+  final Map<String, dynamic>? _department;
   @override
-  final String? department;
+  Map<String, dynamic>? get department {
+    final value = _department;
+    if (value == null) return null;
+    if (_department is EqualUnmodifiableMapView) return _department;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
+
   @override
   final int? expYears;
 
@@ -298,8 +311,8 @@ class _$DoctorProfileImpl implements _DoctorProfile {
             (identical(other.bufferTime, bufferTime) ||
                 other.bufferTime == bufferTime) &&
             (identical(other.image, image) || other.image == image) &&
-            (identical(other.department, department) ||
-                other.department == department) &&
+            const DeepCollectionEquality()
+                .equals(other._department, _department) &&
             (identical(other.expYears, expYears) ||
                 other.expYears == expYears));
   }
@@ -317,7 +330,7 @@ class _$DoctorProfileImpl implements _DoctorProfile {
       appointmentDuration,
       bufferTime,
       image,
-      department,
+      const DeepCollectionEquality().hash(_department),
       expYears);
 
   /// Create a copy of DoctorProfile
@@ -338,7 +351,7 @@ class _$DoctorProfileImpl implements _DoctorProfile {
 
 abstract class _DoctorProfile implements DoctorProfile {
   const factory _DoctorProfile(
-      {final String? id,
+      {@JsonKey(name: 'uuid') final String? id,
       final String? name,
       final String? city,
       final String? country,
@@ -346,14 +359,15 @@ abstract class _DoctorProfile implements DoctorProfile {
       final String? about,
       final int? appointmentDuration,
       final int? bufferTime,
-      final String? image,
-      final String? department,
+      @JsonKey(name: 'profileImage') final String? image,
+      final Map<String, dynamic>? department,
       final int? expYears}) = _$DoctorProfileImpl;
 
   factory _DoctorProfile.fromJson(Map<String, dynamic> json) =
       _$DoctorProfileImpl.fromJson;
 
   @override
+  @JsonKey(name: 'uuid')
   String? get id;
   @override
   String? get name;
@@ -370,9 +384,10 @@ abstract class _DoctorProfile implements DoctorProfile {
   @override
   int? get bufferTime;
   @override
+  @JsonKey(name: 'profileImage')
   String? get image;
   @override
-  String? get department;
+  Map<String, dynamic>? get department;
   @override
   int? get expYears;
 
@@ -991,7 +1006,8 @@ class __$$DoctorScheduleImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$DoctorScheduleImpl implements _DoctorSchedule {
   const _$DoctorScheduleImpl(
-      {this.doctorId, required final Map<String, List<TimeSlot>> availability})
+      {this.doctorId,
+      final Map<String, List<TimeSlot>> availability = const {}})
       : _availability = availability;
 
   factory _$DoctorScheduleImpl.fromJson(Map<String, dynamic> json) =>
@@ -1001,6 +1017,7 @@ class _$DoctorScheduleImpl implements _DoctorSchedule {
   final String? doctorId;
   final Map<String, List<TimeSlot>> _availability;
   @override
+  @JsonKey()
   Map<String, List<TimeSlot>> get availability {
     if (_availability is EqualUnmodifiableMapView) return _availability;
     // ignore: implicit_dynamic_type
@@ -1047,9 +1064,8 @@ class _$DoctorScheduleImpl implements _DoctorSchedule {
 
 abstract class _DoctorSchedule implements DoctorSchedule {
   const factory _DoctorSchedule(
-          {final String? doctorId,
-          required final Map<String, List<TimeSlot>> availability}) =
-      _$DoctorScheduleImpl;
+      {final String? doctorId,
+      final Map<String, List<TimeSlot>> availability}) = _$DoctorScheduleImpl;
 
   factory _DoctorSchedule.fromJson(Map<String, dynamic> json) =
       _$DoctorScheduleImpl.fromJson;
@@ -1265,22 +1281,24 @@ class __$$AppointmentImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AppointmentImpl implements _Appointment {
   const _$AppointmentImpl(
-      {required this.id,
-      required this.doctorId,
+      {this.id = '',
+      this.doctorId = '',
       this.patientId,
       this.patientName,
       this.patientImage,
-      required this.date,
-      required this.startTime,
-      required this.endTime,
+      this.date = '',
+      this.startTime = '',
+      this.endTime = '',
       this.status = 0});
 
   factory _$AppointmentImpl.fromJson(Map<String, dynamic> json) =>
       _$$AppointmentImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String doctorId;
   @override
   final String? patientId;
@@ -1289,10 +1307,13 @@ class _$AppointmentImpl implements _Appointment {
   @override
   final String? patientImage;
   @override
+  @JsonKey()
   final String date;
   @override
+  @JsonKey()
   final String startTime;
   @override
+  @JsonKey()
   final String endTime;
   @override
   @JsonKey()
@@ -1347,14 +1368,14 @@ class _$AppointmentImpl implements _Appointment {
 
 abstract class _Appointment implements Appointment {
   const factory _Appointment(
-      {required final String id,
-      required final String doctorId,
+      {final String id,
+      final String doctorId,
       final String? patientId,
       final String? patientName,
       final String? patientImage,
-      required final String date,
-      required final String startTime,
-      required final String endTime,
+      final String date,
+      final String startTime,
+      final String endTime,
       final int status}) = _$AppointmentImpl;
 
   factory _Appointment.fromJson(Map<String, dynamic> json) =
@@ -1396,7 +1417,7 @@ mixin _$Payment {
   String? get id => throw _privateConstructorUsedError;
   String get patientId => throw _privateConstructorUsedError;
   String get appointmentId => throw _privateConstructorUsedError;
-  double get amount => throw _privateConstructorUsedError;
+  double? get amount => throw _privateConstructorUsedError;
   String? get date => throw _privateConstructorUsedError;
 
   /// Serializes this Payment to a JSON map.
@@ -1417,7 +1438,7 @@ abstract class $PaymentCopyWith<$Res> {
       {String? id,
       String patientId,
       String appointmentId,
-      double amount,
+      double? amount,
       String? date});
 }
 
@@ -1439,7 +1460,7 @@ class _$PaymentCopyWithImpl<$Res, $Val extends Payment>
     Object? id = freezed,
     Object? patientId = null,
     Object? appointmentId = null,
-    Object? amount = null,
+    Object? amount = freezed,
     Object? date = freezed,
   }) {
     return _then(_value.copyWith(
@@ -1455,10 +1476,10 @@ class _$PaymentCopyWithImpl<$Res, $Val extends Payment>
           ? _value.appointmentId
           : appointmentId // ignore: cast_nullable_to_non_nullable
               as String,
-      amount: null == amount
+      amount: freezed == amount
           ? _value.amount
           : amount // ignore: cast_nullable_to_non_nullable
-              as double,
+              as double?,
       date: freezed == date
           ? _value.date
           : date // ignore: cast_nullable_to_non_nullable
@@ -1478,7 +1499,7 @@ abstract class _$$PaymentImplCopyWith<$Res> implements $PaymentCopyWith<$Res> {
       {String? id,
       String patientId,
       String appointmentId,
-      double amount,
+      double? amount,
       String? date});
 }
 
@@ -1498,7 +1519,7 @@ class __$$PaymentImplCopyWithImpl<$Res>
     Object? id = freezed,
     Object? patientId = null,
     Object? appointmentId = null,
-    Object? amount = null,
+    Object? amount = freezed,
     Object? date = freezed,
   }) {
     return _then(_$PaymentImpl(
@@ -1514,10 +1535,10 @@ class __$$PaymentImplCopyWithImpl<$Res>
           ? _value.appointmentId
           : appointmentId // ignore: cast_nullable_to_non_nullable
               as String,
-      amount: null == amount
+      amount: freezed == amount
           ? _value.amount
           : amount // ignore: cast_nullable_to_non_nullable
-              as double,
+              as double?,
       date: freezed == date
           ? _value.date
           : date // ignore: cast_nullable_to_non_nullable
@@ -1533,7 +1554,7 @@ class _$PaymentImpl implements _Payment {
       {this.id,
       required this.patientId,
       required this.appointmentId,
-      required this.amount,
+      this.amount,
       this.date});
 
   factory _$PaymentImpl.fromJson(Map<String, dynamic> json) =>
@@ -1546,7 +1567,7 @@ class _$PaymentImpl implements _Payment {
   @override
   final String appointmentId;
   @override
-  final double amount;
+  final double? amount;
   @override
   final String? date;
 
@@ -1595,7 +1616,7 @@ abstract class _Payment implements Payment {
       {final String? id,
       required final String patientId,
       required final String appointmentId,
-      required final double amount,
+      final double? amount,
       final String? date}) = _$PaymentImpl;
 
   factory _Payment.fromJson(Map<String, dynamic> json) = _$PaymentImpl.fromJson;
@@ -1607,7 +1628,7 @@ abstract class _Payment implements Payment {
   @override
   String get appointmentId;
   @override
-  double get amount;
+  double? get amount;
   @override
   String? get date;
 
@@ -1626,7 +1647,7 @@ DailyBreakdown _$DailyBreakdownFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$DailyBreakdown {
   String get date => throw _privateConstructorUsedError;
-  double get total => throw _privateConstructorUsedError;
+  double? get total => throw _privateConstructorUsedError;
 
   /// Serializes this DailyBreakdown to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -1644,7 +1665,7 @@ abstract class $DailyBreakdownCopyWith<$Res> {
           DailyBreakdown value, $Res Function(DailyBreakdown) then) =
       _$DailyBreakdownCopyWithImpl<$Res, DailyBreakdown>;
   @useResult
-  $Res call({String date, double total});
+  $Res call({String date, double? total});
 }
 
 /// @nodoc
@@ -1663,17 +1684,17 @@ class _$DailyBreakdownCopyWithImpl<$Res, $Val extends DailyBreakdown>
   @override
   $Res call({
     Object? date = null,
-    Object? total = null,
+    Object? total = freezed,
   }) {
     return _then(_value.copyWith(
       date: null == date
           ? _value.date
           : date // ignore: cast_nullable_to_non_nullable
               as String,
-      total: null == total
+      total: freezed == total
           ? _value.total
           : total // ignore: cast_nullable_to_non_nullable
-              as double,
+              as double?,
     ) as $Val);
   }
 }
@@ -1686,7 +1707,7 @@ abstract class _$$DailyBreakdownImplCopyWith<$Res>
       __$$DailyBreakdownImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String date, double total});
+  $Res call({String date, double? total});
 }
 
 /// @nodoc
@@ -1703,17 +1724,17 @@ class __$$DailyBreakdownImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? date = null,
-    Object? total = null,
+    Object? total = freezed,
   }) {
     return _then(_$DailyBreakdownImpl(
       date: null == date
           ? _value.date
           : date // ignore: cast_nullable_to_non_nullable
               as String,
-      total: null == total
+      total: freezed == total
           ? _value.total
           : total // ignore: cast_nullable_to_non_nullable
-              as double,
+              as double?,
     ));
   }
 }
@@ -1721,15 +1742,16 @@ class __$$DailyBreakdownImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$DailyBreakdownImpl implements _DailyBreakdown {
-  const _$DailyBreakdownImpl({required this.date, required this.total});
+  const _$DailyBreakdownImpl({this.date = '', this.total});
 
   factory _$DailyBreakdownImpl.fromJson(Map<String, dynamic> json) =>
       _$$DailyBreakdownImplFromJson(json);
 
   @override
+  @JsonKey()
   final String date;
   @override
-  final double total;
+  final double? total;
 
   @override
   String toString() {
@@ -1767,9 +1789,8 @@ class _$DailyBreakdownImpl implements _DailyBreakdown {
 }
 
 abstract class _DailyBreakdown implements DailyBreakdown {
-  const factory _DailyBreakdown(
-      {required final String date,
-      required final double total}) = _$DailyBreakdownImpl;
+  const factory _DailyBreakdown({final String date, final double? total}) =
+      _$DailyBreakdownImpl;
 
   factory _DailyBreakdown.fromJson(Map<String, dynamic> json) =
       _$DailyBreakdownImpl.fromJson;
@@ -1777,7 +1798,7 @@ abstract class _DailyBreakdown implements DailyBreakdown {
   @override
   String get date;
   @override
-  double get total;
+  double? get total;
 
   /// Create a copy of DailyBreakdown
   /// with the given fields replaced by the non-null parameter values.
@@ -1793,9 +1814,10 @@ RevenueData _$RevenueDataFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$RevenueData {
-  double get totalEarnings => throw _privateConstructorUsedError;
-  int get totalPayments => throw _privateConstructorUsedError;
-  List<DailyBreakdown> get dailyBreakdown => throw _privateConstructorUsedError;
+  double? get totalEarnings => throw _privateConstructorUsedError;
+  int? get totalPayments => throw _privateConstructorUsedError;
+  List<DailyBreakdown>? get dailyBreakdown =>
+      throw _privateConstructorUsedError;
 
   /// Serializes this RevenueData to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -1814,9 +1836,9 @@ abstract class $RevenueDataCopyWith<$Res> {
       _$RevenueDataCopyWithImpl<$Res, RevenueData>;
   @useResult
   $Res call(
-      {double totalEarnings,
-      int totalPayments,
-      List<DailyBreakdown> dailyBreakdown});
+      {double? totalEarnings,
+      int? totalPayments,
+      List<DailyBreakdown>? dailyBreakdown});
 }
 
 /// @nodoc
@@ -1834,23 +1856,23 @@ class _$RevenueDataCopyWithImpl<$Res, $Val extends RevenueData>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? totalEarnings = null,
-    Object? totalPayments = null,
-    Object? dailyBreakdown = null,
+    Object? totalEarnings = freezed,
+    Object? totalPayments = freezed,
+    Object? dailyBreakdown = freezed,
   }) {
     return _then(_value.copyWith(
-      totalEarnings: null == totalEarnings
+      totalEarnings: freezed == totalEarnings
           ? _value.totalEarnings
           : totalEarnings // ignore: cast_nullable_to_non_nullable
-              as double,
-      totalPayments: null == totalPayments
+              as double?,
+      totalPayments: freezed == totalPayments
           ? _value.totalPayments
           : totalPayments // ignore: cast_nullable_to_non_nullable
-              as int,
-      dailyBreakdown: null == dailyBreakdown
+              as int?,
+      dailyBreakdown: freezed == dailyBreakdown
           ? _value.dailyBreakdown
           : dailyBreakdown // ignore: cast_nullable_to_non_nullable
-              as List<DailyBreakdown>,
+              as List<DailyBreakdown>?,
     ) as $Val);
   }
 }
@@ -1864,9 +1886,9 @@ abstract class _$$RevenueDataImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {double totalEarnings,
-      int totalPayments,
-      List<DailyBreakdown> dailyBreakdown});
+      {double? totalEarnings,
+      int? totalPayments,
+      List<DailyBreakdown>? dailyBreakdown});
 }
 
 /// @nodoc
@@ -1882,23 +1904,23 @@ class __$$RevenueDataImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? totalEarnings = null,
-    Object? totalPayments = null,
-    Object? dailyBreakdown = null,
+    Object? totalEarnings = freezed,
+    Object? totalPayments = freezed,
+    Object? dailyBreakdown = freezed,
   }) {
     return _then(_$RevenueDataImpl(
-      totalEarnings: null == totalEarnings
+      totalEarnings: freezed == totalEarnings
           ? _value.totalEarnings
           : totalEarnings // ignore: cast_nullable_to_non_nullable
-              as double,
-      totalPayments: null == totalPayments
+              as double?,
+      totalPayments: freezed == totalPayments
           ? _value.totalPayments
           : totalPayments // ignore: cast_nullable_to_non_nullable
-              as int,
-      dailyBreakdown: null == dailyBreakdown
+              as int?,
+      dailyBreakdown: freezed == dailyBreakdown
           ? _value._dailyBreakdown
           : dailyBreakdown // ignore: cast_nullable_to_non_nullable
-              as List<DailyBreakdown>,
+              as List<DailyBreakdown>?,
     ));
   }
 }
@@ -1909,7 +1931,7 @@ class _$RevenueDataImpl implements _RevenueData {
   const _$RevenueDataImpl(
       {this.totalEarnings = 0.0,
       this.totalPayments = 0,
-      final List<DailyBreakdown> dailyBreakdown = const []})
+      final List<DailyBreakdown>? dailyBreakdown = const []})
       : _dailyBreakdown = dailyBreakdown;
 
   factory _$RevenueDataImpl.fromJson(Map<String, dynamic> json) =>
@@ -1917,17 +1939,19 @@ class _$RevenueDataImpl implements _RevenueData {
 
   @override
   @JsonKey()
-  final double totalEarnings;
+  final double? totalEarnings;
   @override
   @JsonKey()
-  final int totalPayments;
-  final List<DailyBreakdown> _dailyBreakdown;
+  final int? totalPayments;
+  final List<DailyBreakdown>? _dailyBreakdown;
   @override
   @JsonKey()
-  List<DailyBreakdown> get dailyBreakdown {
+  List<DailyBreakdown>? get dailyBreakdown {
+    final value = _dailyBreakdown;
+    if (value == null) return null;
     if (_dailyBreakdown is EqualUnmodifiableListView) return _dailyBreakdown;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_dailyBreakdown);
+    return EqualUnmodifiableListView(value);
   }
 
   @override
@@ -1971,19 +1995,19 @@ class _$RevenueDataImpl implements _RevenueData {
 
 abstract class _RevenueData implements RevenueData {
   const factory _RevenueData(
-      {final double totalEarnings,
-      final int totalPayments,
-      final List<DailyBreakdown> dailyBreakdown}) = _$RevenueDataImpl;
+      {final double? totalEarnings,
+      final int? totalPayments,
+      final List<DailyBreakdown>? dailyBreakdown}) = _$RevenueDataImpl;
 
   factory _RevenueData.fromJson(Map<String, dynamic> json) =
       _$RevenueDataImpl.fromJson;
 
   @override
-  double get totalEarnings;
+  double? get totalEarnings;
   @override
-  int get totalPayments;
+  int? get totalPayments;
   @override
-  List<DailyBreakdown> get dailyBreakdown;
+  List<DailyBreakdown>? get dailyBreakdown;
 
   /// Create a copy of RevenueData
   /// with the given fields replaced by the non-null parameter values.
@@ -2118,14 +2142,16 @@ class __$$SystemNotificationImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$SystemNotificationImpl implements _SystemNotification {
   const _$SystemNotificationImpl(
-      {required this.id, required this.message, this.read = false, this.date});
+      {this.id = '', this.message = '', this.read = false, this.date});
 
   factory _$SystemNotificationImpl.fromJson(Map<String, dynamic> json) =>
       _$$SystemNotificationImplFromJson(json);
 
   @override
+  @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String message;
   @override
   @JsonKey()
@@ -2172,8 +2198,8 @@ class _$SystemNotificationImpl implements _SystemNotification {
 
 abstract class _SystemNotification implements SystemNotification {
   const factory _SystemNotification(
-      {required final String id,
-      required final String message,
+      {final String id,
+      final String message,
       final bool read,
       final String? date}) = _$SystemNotificationImpl;
 
@@ -2456,9 +2482,9 @@ RatingsData _$RatingsDataFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$RatingsData {
-  double get averageRating => throw _privateConstructorUsedError;
-  int get totalRatings => throw _privateConstructorUsedError;
-  List<Rating> get ratings => throw _privateConstructorUsedError;
+  double? get averageRating => throw _privateConstructorUsedError;
+  int? get totalRatings => throw _privateConstructorUsedError;
+  List<Rating>? get ratings => throw _privateConstructorUsedError;
 
   /// Serializes this RatingsData to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -2476,7 +2502,7 @@ abstract class $RatingsDataCopyWith<$Res> {
           RatingsData value, $Res Function(RatingsData) then) =
       _$RatingsDataCopyWithImpl<$Res, RatingsData>;
   @useResult
-  $Res call({double averageRating, int totalRatings, List<Rating> ratings});
+  $Res call({double? averageRating, int? totalRatings, List<Rating>? ratings});
 }
 
 /// @nodoc
@@ -2494,23 +2520,23 @@ class _$RatingsDataCopyWithImpl<$Res, $Val extends RatingsData>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? averageRating = null,
-    Object? totalRatings = null,
-    Object? ratings = null,
+    Object? averageRating = freezed,
+    Object? totalRatings = freezed,
+    Object? ratings = freezed,
   }) {
     return _then(_value.copyWith(
-      averageRating: null == averageRating
+      averageRating: freezed == averageRating
           ? _value.averageRating
           : averageRating // ignore: cast_nullable_to_non_nullable
-              as double,
-      totalRatings: null == totalRatings
+              as double?,
+      totalRatings: freezed == totalRatings
           ? _value.totalRatings
           : totalRatings // ignore: cast_nullable_to_non_nullable
-              as int,
-      ratings: null == ratings
+              as int?,
+      ratings: freezed == ratings
           ? _value.ratings
           : ratings // ignore: cast_nullable_to_non_nullable
-              as List<Rating>,
+              as List<Rating>?,
     ) as $Val);
   }
 }
@@ -2523,7 +2549,7 @@ abstract class _$$RatingsDataImplCopyWith<$Res>
       __$$RatingsDataImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({double averageRating, int totalRatings, List<Rating> ratings});
+  $Res call({double? averageRating, int? totalRatings, List<Rating>? ratings});
 }
 
 /// @nodoc
@@ -2539,23 +2565,23 @@ class __$$RatingsDataImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? averageRating = null,
-    Object? totalRatings = null,
-    Object? ratings = null,
+    Object? averageRating = freezed,
+    Object? totalRatings = freezed,
+    Object? ratings = freezed,
   }) {
     return _then(_$RatingsDataImpl(
-      averageRating: null == averageRating
+      averageRating: freezed == averageRating
           ? _value.averageRating
           : averageRating // ignore: cast_nullable_to_non_nullable
-              as double,
-      totalRatings: null == totalRatings
+              as double?,
+      totalRatings: freezed == totalRatings
           ? _value.totalRatings
           : totalRatings // ignore: cast_nullable_to_non_nullable
-              as int,
-      ratings: null == ratings
+              as int?,
+      ratings: freezed == ratings
           ? _value._ratings
           : ratings // ignore: cast_nullable_to_non_nullable
-              as List<Rating>,
+              as List<Rating>?,
     ));
   }
 }
@@ -2566,7 +2592,7 @@ class _$RatingsDataImpl implements _RatingsData {
   const _$RatingsDataImpl(
       {this.averageRating = 0.0,
       this.totalRatings = 0,
-      final List<Rating> ratings = const []})
+      final List<Rating>? ratings = const []})
       : _ratings = ratings;
 
   factory _$RatingsDataImpl.fromJson(Map<String, dynamic> json) =>
@@ -2574,17 +2600,19 @@ class _$RatingsDataImpl implements _RatingsData {
 
   @override
   @JsonKey()
-  final double averageRating;
+  final double? averageRating;
   @override
   @JsonKey()
-  final int totalRatings;
-  final List<Rating> _ratings;
+  final int? totalRatings;
+  final List<Rating>? _ratings;
   @override
   @JsonKey()
-  List<Rating> get ratings {
+  List<Rating>? get ratings {
+    final value = _ratings;
+    if (value == null) return null;
     if (_ratings is EqualUnmodifiableListView) return _ratings;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_ratings);
+    return EqualUnmodifiableListView(value);
   }
 
   @override
@@ -2627,19 +2655,19 @@ class _$RatingsDataImpl implements _RatingsData {
 
 abstract class _RatingsData implements RatingsData {
   const factory _RatingsData(
-      {final double averageRating,
-      final int totalRatings,
-      final List<Rating> ratings}) = _$RatingsDataImpl;
+      {final double? averageRating,
+      final int? totalRatings,
+      final List<Rating>? ratings}) = _$RatingsDataImpl;
 
   factory _RatingsData.fromJson(Map<String, dynamic> json) =
       _$RatingsDataImpl.fromJson;
 
   @override
-  double get averageRating;
+  double? get averageRating;
   @override
-  int get totalRatings;
+  int? get totalRatings;
   @override
-  List<Rating> get ratings;
+  List<Rating>? get ratings;
 
   /// Create a copy of RatingsData
   /// with the given fields replaced by the non-null parameter values.

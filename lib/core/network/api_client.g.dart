@@ -6,11 +6,9 @@ part of 'api_client.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$apiClientHash() => r'b65b4f1402cc9dffff564cad36db83b7b58e0300';
+String _$apiClientHash() => r'15c42f755cf71365371e2f798c128d5e6e72db5d';
 
-/// Provider for the API Client (Dio).
-///
-/// Copied from [apiClient].
+/// See also [apiClient].
 @ProviderFor(apiClient)
 final apiClientProvider = AutoDisposeProvider<Dio>.internal(
   apiClient,

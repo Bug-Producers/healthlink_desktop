@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/utils/error_handler.dart';
+import '../../../../core/utils/image_helper.dart';
 import '../../view_model/appointments_view_model.dart';
 import 'record_payment_dialog.dart';
 import 'patient_history_dialog.dart';
@@ -212,8 +213,8 @@ class AppointmentsListWidget extends ConsumerWidget {
               CircleAvatar(
                 radius: 20,
                 backgroundColor: const Color(0XFFE8ECEF),
-                backgroundImage: data.avatarUrl != null ? NetworkImage(data.avatarUrl!) : null,
-                child: data.avatarUrl == null
+                backgroundImage: ImageHelper.getImageProvider(data.avatarUrl),
+                child: data.avatarUrl == null || data.avatarUrl!.isEmpty
                     ? Text(
                         data.initials,
                         style: const TextStyle(color: Color(0XFF3d4947), fontWeight: FontWeight.w700, fontSize: 14),

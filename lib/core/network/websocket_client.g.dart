@@ -8,7 +8,12 @@ part of 'websocket_client.dart';
 
 String _$webSocketClientHash() => r'cc8a1500a420a594deab28fb9458a59b4ea14ea7';
 
-/// See also [webSocketClient].
+/// Singleton provider for the [WebSocketClient].
+///
+/// @param ref The Riverpod [Ref].
+/// @return A configured and connected [WebSocketClient] instance.
+///
+/// Copied from [webSocketClient].
 @ProviderFor(webSocketClient)
 final webSocketClientProvider = Provider<WebSocketClient>.internal(
   webSocketClient,

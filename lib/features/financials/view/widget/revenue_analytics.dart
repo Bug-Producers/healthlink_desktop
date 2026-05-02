@@ -49,13 +49,14 @@ class RevenueAnalyticsWidget extends ConsumerWidget {
         ),
         data: (data) {
           final revenue = data.revenue;
-          final breakdown = revenue.dailyBreakdown;
+          final breakdown = revenue.dailyBreakdown ?? [];
           // Build chart spots
           List<FlSpot> spots = [];
           double maxY = 1;
           for (int i = 0; i < breakdown.length; i++) {
-            spots.add(FlSpot(i.toDouble(), breakdown[i].total));
-            if (breakdown[i].total > maxY) maxY = breakdown[i].total;
+            final t = breakdown[i].total ?? 0.0;
+            spots.add(FlSpot(i.toDouble(), t));
+            if (t > maxY) maxY = t;
           }
           if (spots.isEmpty) {
             spots = [const FlSpot(0, 0), const FlSpot(1, 0)];
@@ -93,7 +94,7 @@ class RevenueAnalyticsWidget extends ConsumerWidget {
                           text: TextSpan(
                             children: [
                               TextSpan(
-                                text: "\$${revenue.totalEarnings.toStringAsFixed(0)}",
+                                text: "\$${(revenue.totalEarnings ?? 0).toStringAsFixed(0)}",
                                 style: const TextStyle(color: Colors.black, fontSize: 42, fontWeight: FontWeight.w700, fontFamily: 'Inter'),
                               ),
                               const TextSpan(

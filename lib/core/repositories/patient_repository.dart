@@ -11,10 +11,25 @@ class PatientRepository {
   /// The HTTP client for network interactions.
   final Dio _dio;
 
-  /// Initializes the repository with a Dio client.
+  /// Constructs a [PatientRepository] with the provided Dio instance.
   /// 
-  /// @param _dio The Dio instance.
+  /// @param _dio The Dio instance configured with the API base URL and interceptors.
   PatientRepository(this._dio);
+
+  Map<String, dynamic> _safeMap(dynamic e) {
+    if (e is Map<String, dynamic>) return e;
+    if (e is Map) return Map<String, dynamic>.from(e);
+    return {};
+  }
+
+  List _safeList(dynamic data, String key) {
+    if (data is List) return data;
+    if (data is Map && data.containsKey(key)) {
+      final val = data[key];
+      if (val is List) return val;
+    }
+    return [];
+  }
 
   /// Retrieves basic identity and profile data for a specific patient.
   /// 
@@ -22,7 +37,7 @@ class PatientRepository {
   /// @return A [Future] resolving to [PatientInfo].
   Future<PatientInfo> getPatient(String patientId) async {
     final response = await _dio.get('/api/patients/$patientId');
-    return PatientInfo.fromJson(response.data);
+    return PatientInfo.fromJson(_safeMap(response.data));
   }
 
   /// Fetches the chronological medical history of a patient.
@@ -34,8 +49,8 @@ class PatientRepository {
       '/api/patients/history',
       queryParameters: {'patientId': patientId},
     );
-    final data = response.data as List;
-    return data.map((e) => PatientHistory.fromJson(e)).toList();
+    final data = _safeList(response.data, 'history');
+    return data.map((e) => PatientHistory.fromJson(_safeMap(e))).toList();
   }
 
   /// Appends a new medical report or diagnosis to the patient's records.
@@ -44,10 +59,13 @@ class PatientRepository {
   /// @param report The text content of the report (diagnosis/prescription).
   /// @return A [Future] that completes when the report is added.
   Future<void> addPatientReport(String patientId, String report) async {
-    await _dio.post('/api/patients/history', data: {
-      'patientId': patientId,
-      'report': report,
-    });
+    await _dio.post(
+      '/api/patients/history',
+      data: {
+        'patientId': patientId,
+        'report': report,
+      },
+    );
   }
 }
 

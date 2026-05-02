@@ -23,11 +23,12 @@ class DashboardScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final paddingValue = ResponsiveValue<double>(
       context,
+      defaultValue: 40.0,
       conditionalValues: [
         const Condition.smallerThan(name: TABLET, value: 16.0),
         const Condition.equals(name: TABLET, value: 24.0),
       ],
-    ).value ?? 40.0;
+    ).value;
 
     final dashboardState = ref.watch(dashboardViewModelProvider);
 
@@ -92,7 +93,7 @@ class DashboardScreen extends ConsumerWidget {
                               child: OverViewTiles(
                                 title: "TOTAL REVENUE",
                                 icon: Icons.payments,
-                                value: "\$${data.revenue.totalEarnings.toStringAsFixed(0)}",
+                                value: "\$${(data.revenue.totalEarnings ?? 0).toStringAsFixed(0)}",
                                 subtitle: "This Month",
                                 iconColor: const Color(0xFF006D60),
                               ),
@@ -102,7 +103,7 @@ class DashboardScreen extends ConsumerWidget {
                               child: OverViewTiles(
                                 title: "PATIENT SATISFACTION",
                                 icon: Icons.star,
-                                value: data.ratings.averageRating.toStringAsFixed(1),
+                                value: (data.ratings.averageRating ?? 0).toStringAsFixed(1),
                                 subtitle: "Avg Rating",
                                 iconColor: Colors.amber,
                               ),

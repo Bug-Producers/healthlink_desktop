@@ -45,7 +45,7 @@ class ErrorHandler {
       return 'Permission denied. Contact your administrator.';
     }
     
-    return 'An unexpected error occurred. Please try again.';
+    return 'An unexpected error occurred: $msg';
   }
 
   /// Categorizes and translates Dio-specific network failures.

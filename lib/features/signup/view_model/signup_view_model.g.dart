@@ -6,12 +6,12 @@ part of 'signup_view_model.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$signupViewModelHash() => r'399498f94df4c50156ad54bca881f84199315a9a';
+String _$signupViewModelHash() => r'8c9159912efca218cceb2da0b4792dbe601017bf';
 
-/// ViewModel for the doctor signup/registration flow.
+/// The [SignupViewModel] handles the complex two-stage registration process.
 ///
-/// Handles Firebase user creation followed by the API registration call
-/// to POST /api/doctors/register.
+/// 1. Authentication: Creates a user record in Firebase Auth.
+/// 2. Registration: Submits professional details to the HealthLink backend.
 ///
 /// Copied from [SignupViewModel].
 @ProviderFor(SignupViewModel)

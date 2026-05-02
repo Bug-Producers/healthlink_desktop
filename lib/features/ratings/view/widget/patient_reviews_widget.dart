@@ -38,7 +38,7 @@ class _PatientReviewsWidgetState extends ConsumerState<PatientReviewsWidget> {
       ),
       error: (err, _) => Center(child: Text(ErrorHandler.getMessage(err))),
       data: (data) {
-        var reviews = List.of(data.ratings);
+        var reviews = List.of(data.ratings ?? []);
 
         // Sort based on filter
         switch (_selectedFilter) {

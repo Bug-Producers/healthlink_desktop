@@ -115,6 +115,13 @@ class WeeklyAvailabilityWidgetState extends ConsumerState<WeeklyAvailabilityWidg
   /// @return A [Map] of days to their enabled status.
   Map<String, bool> get currentActiveDays => Map.from(_activeDays);
 
+  /// Resets the local state to force a reload from the provider.
+  void resetState() {
+    setState(() {
+      _loaded = false;
+    });
+  }
+
   /// Builds a row representing a single day's schedule.
   /// 
   /// @param context The build context.

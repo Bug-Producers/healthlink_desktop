@@ -21,11 +21,12 @@ class AppointmentScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final paddingValue = ResponsiveValue<double>(
       context,
+      defaultValue: 40.0,
       conditionalValues: [
         const Condition.smallerThan(name: TABLET, value: 16.0),
         const Condition.equals(name: TABLET, value: 24.0),
       ],
-    ).value ?? 40.0;
+    ).value;
 
     final appointmentsState = ref.watch(appointmentsViewModelProvider);
 

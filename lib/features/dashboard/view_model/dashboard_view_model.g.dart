@@ -9,7 +9,9 @@ part of 'dashboard_view_model.dart';
 String _$dashboardViewModelHash() =>
     r'95f15ed5c4fa45a20c2f56e1bfe9800a6fdd3f17';
 
-/// See also [DashboardViewModel].
+/// The [DashboardViewModel] manages the business logic and state for the dashboard UI.
+///
+/// Copied from [DashboardViewModel].
 @ProviderFor(DashboardViewModel)
 final dashboardViewModelProvider = AutoDisposeAsyncNotifierProvider<
     DashboardViewModel, DashboardData>.internal(

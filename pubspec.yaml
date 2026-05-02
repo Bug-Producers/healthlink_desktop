@@ -27,8 +27,8 @@ dependencies:
   web_socket_channel: ^3.0.3
 
   # Firebase
-  firebase_core: ^3.6.0
-  firebase_auth: ^5.3.0
+  firebase_core: ^3.8.1
+  firebase_auth: ^5.3.4
 
   # Utils
   flutter_dotenv: ^5.1.0

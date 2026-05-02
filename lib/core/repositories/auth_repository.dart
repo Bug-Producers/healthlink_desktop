@@ -34,6 +34,17 @@ class AuthRepository {
     );
   }
 
+  /// Sends a password reset email to the specified address.
+  ///
+  /// Firebase handles the entire reset flow — generating a secure link,
+  /// sending the email, and updating the credential once the user completes
+  /// the process on the web page.
+  ///
+  /// @param email The email address associated with the doctor's account.
+  Future<void> sendPasswordReset(String email) async {
+    await _firebaseAuth.sendPasswordResetEmail(email: email);
+  }
+
   /// Terminates the current authentication session.
   Future<void> signOut() async {
     await _firebaseAuth.signOut();

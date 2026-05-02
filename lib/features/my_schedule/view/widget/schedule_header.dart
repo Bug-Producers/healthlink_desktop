@@ -67,6 +67,8 @@ class ScheduleHeaderWidget extends ConsumerWidget {
                 children: [
                   TextButton(
                     onPressed: () {
+                      weeklyKey?.currentState?.resetState();
+                      consultationKey?.currentState?.resetState();
                       ref.invalidate(scheduleViewModelProvider);
                       ref.invalidate(dashboardViewModelProvider);
                       ErrorHandler.showSuccess(context, 'Changes discarded. Reloading from server.');
@@ -104,14 +106,8 @@ class ScheduleHeaderWidget extends ConsumerWidget {
                           await ref.read(scheduleViewModelProvider.notifier).saveSchedule(schedule);
                         }
 
-                        // Save consultation parameters
-                        final consultState = consultationKey?.currentState;
-                        if (consultState != null) {
-                          final dur = consultState.durationMinutes as int;
-                          final buf = consultState.bufferMinutes as int;
-                          final profile = DoctorProfile(appointmentDuration: dur, bufferTime: buf);
-                          await ref.read(dashboardViewModelProvider.notifier).updateProfile(profile);
-                        }
+                        // Consultation parameters should not be saved via the profile endpoint here.
+                        // The user requested to only hit the schedule endpoint.
 
                         if (context.mounted) {
                           ErrorHandler.showSuccess(context, 'Schedule saved successfully!');

@@ -8,7 +8,12 @@ part of 'schedule_view_model.dart';
 
 String _$scheduleViewModelHash() => r'2b51e5aefb400a1d924a07a269f01aa2ee2a623b';
 
-/// See also [ScheduleViewModel].
+/// The [ScheduleViewModel] manages the doctor's weekly availability state.
+///
+/// It coordinates between the schedule UI and the [DoctorRepository] to
+/// fetch, display, and update active time slots.
+///
+/// Copied from [ScheduleViewModel].
 @ProviderFor(ScheduleViewModel)
 final scheduleViewModelProvider = AutoDisposeAsyncNotifierProvider<
     ScheduleViewModel, DoctorSchedule>.internal(

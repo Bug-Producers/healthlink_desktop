@@ -23,12 +23,14 @@ class WebSocketClient {
   Stream<String> get notifications => _notificationController.stream;
 
   bool _isConnected = false;
+  bool _isIntentionalDisconnect = false;
 
   /// Establishes a connection to the WebSocket server and performs authentication.
   /// 
   /// @return A [Future] that completes when the connection attempt finishes.
   void connect() async {
     if (_isConnected) return;
+    _isIntentionalDisconnect = false;
 
     final wsUrl = dotenv.env['WS_BASE_URL'] ?? 'ws://localhost:3000';
     final url = Uri.parse('$wsUrl/api/ws/notifications');
@@ -73,16 +75,21 @@ class WebSocketClient {
 
   /// Attempts to reconnect to the server after a delay.
   void _reconnect() {
+    if (_isIntentionalDisconnect) return;
+    
     Future.delayed(const Duration(seconds: 5), () {
       connect();
     });
   }
 
   /// Terminates the current WebSocket session and cleans up resources.
+  ///
+  /// Sends a proper close frame (code 1000) to avoid abnormal closure (1006).
   void disconnect() {
+    _isIntentionalDisconnect = true;
     _isConnected = false;
     _subscription?.cancel();
-    _channel?.sink.close();
+    _channel?.sink.close(1000, 'Client disconnecting');
   }
 }
 

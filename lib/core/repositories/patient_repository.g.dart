@@ -8,7 +8,12 @@ part of 'patient_repository.dart';
 
 String _$patientRepositoryHash() => r'6b84af81ff8270665cf80e2bb95c047acd2528f3';
 
-/// See also [patientRepository].
+/// Provider for the [PatientRepository].
+///
+/// @param ref The Riverpod [Ref].
+/// @return A new instance of [PatientRepository].
+///
+/// Copied from [patientRepository].
 @ProviderFor(patientRepository)
 final patientRepositoryProvider =
     AutoDisposeProvider<PatientRepository>.internal(

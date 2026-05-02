@@ -8,7 +8,7 @@ part of 'models.dart';
 
 _$DoctorProfileImpl _$$DoctorProfileImplFromJson(Map<String, dynamic> json) =>
     _$DoctorProfileImpl(
-      id: json['id'] as String?,
+      id: json['uuid'] as String?,
       name: json['name'] as String?,
       city: json['city'] as String?,
       country: json['country'] as String?,
@@ -16,14 +16,14 @@ _$DoctorProfileImpl _$$DoctorProfileImplFromJson(Map<String, dynamic> json) =>
       about: json['about'] as String?,
       appointmentDuration: (json['appointmentDuration'] as num?)?.toInt(),
       bufferTime: (json['bufferTime'] as num?)?.toInt(),
-      image: json['image'] as String?,
-      department: json['department'] as String?,
+      image: json['profileImage'] as String?,
+      department: json['department'] as Map<String, dynamic>?,
       expYears: (json['expYears'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$$DoctorProfileImplToJson(_$DoctorProfileImpl instance) =>
     <String, dynamic>{
-      'id': instance.id,
+      'uuid': instance.id,
       'name': instance.name,
       'city': instance.city,
       'country': instance.country,
@@ -31,7 +31,7 @@ Map<String, dynamic> _$$DoctorProfileImplToJson(_$DoctorProfileImpl instance) =>
       'about': instance.about,
       'appointmentDuration': instance.appointmentDuration,
       'bufferTime': instance.bufferTime,
-      'image': instance.image,
+      'profileImage': instance.image,
       'department': instance.department,
       'expYears': instance.expYears,
     };
@@ -79,13 +79,14 @@ Map<String, dynamic> _$$TimeSlotImplToJson(_$TimeSlotImpl instance) =>
 _$DoctorScheduleImpl _$$DoctorScheduleImplFromJson(Map<String, dynamic> json) =>
     _$DoctorScheduleImpl(
       doctorId: json['doctorId'] as String?,
-      availability: (json['availability'] as Map<String, dynamic>).map(
-        (k, e) => MapEntry(
-            k,
-            (e as List<dynamic>)
-                .map((e) => TimeSlot.fromJson(e as Map<String, dynamic>))
-                .toList()),
-      ),
+      availability: (json['availability'] as Map<String, dynamic>?)?.map(
+            (k, e) => MapEntry(
+                k,
+                (e as List<dynamic>)
+                    .map((e) => TimeSlot.fromJson(e as Map<String, dynamic>))
+                    .toList()),
+          ) ??
+          const {},
     );
 
 Map<String, dynamic> _$$DoctorScheduleImplToJson(
@@ -97,14 +98,14 @@ Map<String, dynamic> _$$DoctorScheduleImplToJson(
 
 _$AppointmentImpl _$$AppointmentImplFromJson(Map<String, dynamic> json) =>
     _$AppointmentImpl(
-      id: json['id'] as String,
-      doctorId: json['doctorId'] as String,
+      id: json['id'] as String? ?? '',
+      doctorId: json['doctorId'] as String? ?? '',
       patientId: json['patientId'] as String?,
       patientName: json['patientName'] as String?,
       patientImage: json['patientImage'] as String?,
-      date: json['date'] as String,
-      startTime: json['startTime'] as String,
-      endTime: json['endTime'] as String,
+      date: json['date'] as String? ?? '',
+      startTime: json['startTime'] as String? ?? '',
+      endTime: json['endTime'] as String? ?? '',
       status: (json['status'] as num?)?.toInt() ?? 0,
     );
 
@@ -126,7 +127,7 @@ _$PaymentImpl _$$PaymentImplFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String?,
       patientId: json['patientId'] as String,
       appointmentId: json['appointmentId'] as String,
-      amount: (json['amount'] as num).toDouble(),
+      amount: (json['amount'] as num?)?.toDouble(),
       date: json['date'] as String?,
     );
 
@@ -141,8 +142,8 @@ Map<String, dynamic> _$$PaymentImplToJson(_$PaymentImpl instance) =>
 
 _$DailyBreakdownImpl _$$DailyBreakdownImplFromJson(Map<String, dynamic> json) =>
     _$DailyBreakdownImpl(
-      date: json['date'] as String,
-      total: (json['total'] as num).toDouble(),
+      date: json['date'] as String? ?? '',
+      total: (json['total'] as num?)?.toDouble(),
     );
 
 Map<String, dynamic> _$$DailyBreakdownImplToJson(
@@ -172,8 +173,8 @@ Map<String, dynamic> _$$RevenueDataImplToJson(_$RevenueDataImpl instance) =>
 _$SystemNotificationImpl _$$SystemNotificationImplFromJson(
         Map<String, dynamic> json) =>
     _$SystemNotificationImpl(
-      id: json['id'] as String,
-      message: json['message'] as String,
+      id: json['id'] as String? ?? '',
+      message: json['message'] as String? ?? '',
       read: json['read'] as bool? ?? false,
       date: json['date'] as String?,
     );

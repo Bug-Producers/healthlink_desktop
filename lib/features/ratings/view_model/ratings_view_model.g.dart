@@ -8,7 +8,8 @@ part of 'ratings_view_model.dart';
 
 String _$ratingsViewModelHash() => r'1ce07ce5ff2c29d188663cb0a20c64ae7a02d9a8';
 
-/// ViewModel for fetching and caching ratings data from the API.
+/// The [RatingsViewModel] facilitates the retrieval and management of doctor
+/// feedback and overall satisfaction metrics.
 ///
 /// Copied from [RatingsViewModel].
 @ProviderFor(RatingsViewModel)

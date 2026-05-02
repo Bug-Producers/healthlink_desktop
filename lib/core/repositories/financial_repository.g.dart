@@ -9,7 +9,12 @@ part of 'financial_repository.dart';
 String _$financialRepositoryHash() =>
     r'8d09d621368806e0fe03aa9b997a74907d282332';
 
-/// See also [financialRepository].
+/// Provider for the [FinancialRepository].
+///
+/// @param ref The Riverpod [Ref] used to watch the API client provider.
+/// @return A configured [FinancialRepository] instance.
+///
+/// Copied from [financialRepository].
 @ProviderFor(financialRepository)
 final financialRepositoryProvider =
     AutoDisposeProvider<FinancialRepository>.internal(

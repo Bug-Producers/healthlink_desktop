@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../features/navigation/view/screen/navigation_screen.dart';
-import '../features/login/view/screen/login_screen.dart';
-import '../core/repositories/doctor_repository.dart';
-import '../core/repositories/auth_repository.dart';
-import '../core/network/websocket_client.dart';
+import 'package:healthlink_desktop/features/navigation/view/screen/navigation_screen.dart';
+import 'package:healthlink_desktop/features/login/view/screen/login_screen.dart';
+import 'package:healthlink_desktop/core/repositories/doctor_repository.dart';
+import 'package:healthlink_desktop/core/repositories/auth_repository.dart';
+import 'package:healthlink_desktop/core/network/websocket_client.dart';
+import 'package:healthlink_desktop/features/dashboard/view_model/dashboard_view_model.dart';
+import 'package:healthlink_desktop/features/appointments/view_model/appointments_view_model.dart';
+import 'package:healthlink_desktop/features/financials/view_model/financials_view_model.dart';
+import 'package:healthlink_desktop/features/my_schedule/view_model/schedule_view_model.dart';
+import 'package:healthlink_desktop/features/ratings/view_model/ratings_view_model.dart';
+import 'package:healthlink_desktop/core/utils/image_helper.dart';
 
 /// The [AppBarWidget] serves as the primary global header for the application.
 ///
@@ -92,6 +98,13 @@ class _AppBarWidgetState extends ConsumerState<AppBarWidget> {
           });
           // Refresh from the API to synchronize IDs and persisted state.
           _loadNotifications();
+          
+          // Auto-refresh the main UI modules when an event occurs.
+          ref.invalidate(dashboardViewModelProvider);
+          ref.invalidate(appointmentsViewModelProvider);
+          ref.invalidate(financialsViewModelProvider);
+          ref.invalidate(scheduleViewModelProvider);
+          ref.invalidate(ratingsViewModelProvider);
         }
       });
     } catch (_) {
@@ -270,9 +283,8 @@ class _AppBarWidgetState extends ConsumerState<AppBarWidget> {
                     CircleAvatar(
                       radius: 20,
                       backgroundColor: const Color(0xFFE8ECEF),
-                      backgroundImage: _doctorImage != null && _doctorImage!.isNotEmpty
-                          ? NetworkImage(_doctorImage!)
-                          : const AssetImage('assets/360_F_396167959_aAhZiGlJoeXOBHivMvaO0Aloxvhg3eVT.jpg') as ImageProvider,
+                      backgroundImage: ImageHelper.getImageProvider(_doctorImage) ??
+                          const AssetImage('assets/360_F_396167959_aAhZiGlJoeXOBHivMvaO0Aloxvhg3eVT.jpg') as ImageProvider,
                     ),
                     const SizedBox(width: 12),
                     Text(

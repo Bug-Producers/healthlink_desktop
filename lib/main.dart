@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:window_manager/window_manager.dart';
 
-import 'features/login/view/screen/login_screen.dart';
+import 'package:healthlink_desktop/features/login/view/screen/login_screen.dart';
+import 'package:healthlink_desktop/features/navigation/view/screen/navigation_screen.dart';
 
 /// The main entry point for the HealthLink desktop application.
 ///
@@ -90,7 +92,9 @@ class MyApp extends StatelessWidget {
         colorSchemeSeed: const Color(0XFF0d9488),
       ),
 
-      home: const LoginScreen(),
+      home: FirebaseAuth.instance.currentUser != null 
+          ? const NavigationScreen() 
+          : const LoginScreen(),
     );
   }
 }

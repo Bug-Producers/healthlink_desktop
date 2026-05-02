@@ -9,7 +9,10 @@ part of 'financials_view_model.dart';
 String _$financialsViewModelHash() =>
     r'35e5000e84170073bac8ba9653f1b142ac8ce503';
 
-/// ViewModel for all financial data: revenue analytics and payment records.
+/// The [FinancialsViewModel] provides the business logic for the Financial Hub.
+///
+/// It fetches analytical and transactional data in parallel to provide a
+/// holistic view of clinical earnings.
 ///
 /// Copied from [FinancialsViewModel].
 @ProviderFor(FinancialsViewModel)

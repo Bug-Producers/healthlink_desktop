@@ -5,6 +5,7 @@ import 'package:healthlink_desktop/features/signup/view/screen/signup_screen.dar
 import '../../../../core/repositories/doctor_repository.dart';
 import '../../../../core/utils/error_handler.dart';
 import '../../view_model/auth_view_model.dart';
+import '../screen/forgot_password_screen.dart';
 
 /// The login form widget with Firebase authentication and doctor verification.
 ///
@@ -90,7 +91,11 @@ class _LoginFormWidgetState extends ConsumerState<LoginFormWidget> {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()),
+                    );
+                  },
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.zero,
                     minimumSize: Size.zero,
@@ -176,7 +181,7 @@ class _LoginFormWidgetState extends ConsumerState<LoginFormWidget> {
         
         TextButton(
           onPressed: () {
-            Navigator.of(context).pushReplacement(
+            Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => const SignupScreen()),
             );
           },
@@ -211,10 +216,11 @@ class _LoginFormWidgetState extends ConsumerState<LoginFormWidget> {
       if (user != null) {
         final isDoc = await doctorRepo.isDoctor(user.uid);
         if (!isDoc) {
-          // Sign out if not a doctor
+          // Sign out fully if not a doctor — show a generic credential error
+          // to avoid revealing account type information.
           await ref.read(authViewModelProvider.notifier).logout();
           if (mounted) {
-            ErrorHandler.showWarning(context, 'This account is not registered as a doctor.\nPlease use the patient app or create a doctor account.');
+            ErrorHandler.showError(context, 'Incorrect email or password. Please try again.');
           }
           return;
         }
