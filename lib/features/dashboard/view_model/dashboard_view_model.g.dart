@@ -7,7 +7,7 @@ part of 'dashboard_view_model.dart';
 // **************************************************************************
 
 String _$dashboardViewModelHash() =>
-    r'95f15ed5c4fa45a20c2f56e1bfe9800a6fdd3f17';
+    r'0811b10a0d9672651330ad69b646e22f83e734aa';
 
 /// The [DashboardViewModel] manages the business logic and state for the dashboard UI.
 ///

@@ -7,7 +7,7 @@ part of 'financials_view_model.dart';
 // **************************************************************************
 
 String _$financialsViewModelHash() =>
-    r'35e5000e84170073bac8ba9653f1b142ac8ce503';
+    r'0ce76939ee9576fb080ed471508cab7432ab376a';
 
 /// The [FinancialsViewModel] provides the business logic for the Financial Hub.
 ///

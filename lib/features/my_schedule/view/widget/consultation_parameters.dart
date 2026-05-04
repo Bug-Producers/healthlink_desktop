@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../dashboard/view_model/dashboard_view_model.dart';
+import '../../view_model/schedule_view_model.dart';
 
 /// [ConsultationParametersWidget] enables doctors to configure the temporal 
 /// constraints of their appointments.
@@ -51,12 +51,12 @@ class ConsultationParametersWidgetState extends ConsumerState<ConsultationParame
 
   @override
   Widget build(BuildContext context) {
-    final dashState = ref.watch(dashboardViewModelProvider);
-    dashState.whenData((data) {
+    final scheduleState = ref.watch(scheduleViewModelProvider);
+    scheduleState.whenData((schedule) {
       if (!_initialized) {
         _initialized = true;
-        final dur = data.profile.appointmentDuration ?? 30;
-        final buf = data.profile.bufferTime ?? 10;
+        final dur = schedule.appointmentDuration;
+        final buf = schedule.bufferTime;
         setState(() {
           _appointmentDuration = "$dur minutes";
           _bufferTime = buf == 0 ? "None" : "$buf minutes";

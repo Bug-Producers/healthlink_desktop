@@ -102,7 +102,15 @@ class ScheduleHeaderWidget extends ConsumerWidget {
                               }).toList();
                             }
                           }
-                          final schedule = DoctorSchedule(availability: availability);
+                          final consultationState = consultationKey?.currentState;
+                          final duration = consultationState?.durationMinutes ?? 30;
+                          final buffer = consultationState?.bufferMinutes ?? 10;
+
+                          final schedule = DoctorSchedule(
+                            availability: availability,
+                            appointmentDuration: duration,
+                            bufferTime: buffer,
+                          );
                           await ref.read(scheduleViewModelProvider.notifier).saveSchedule(schedule);
                         }
 

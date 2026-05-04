@@ -16,8 +16,6 @@ abstract class DoctorProfile with _$DoctorProfile {
     String? country,
     String? hospitalOrClinicName,
     String? about,
-    int? appointmentDuration,
-    int? bufferTime,
     @JsonKey(name: 'profileImage') String? image,
     Map<String, dynamic>? department,
     int? expYears,
@@ -65,6 +63,8 @@ abstract class TimeSlot with _$TimeSlot {
 abstract class DoctorSchedule with _$DoctorSchedule {
   const factory DoctorSchedule({
     String? doctorId,
+    @Default(30) int appointmentDuration,
+    @Default(10) int bufferTime,
     @Default({}) Map<String, List<TimeSlot>> availability,
   }) = _DoctorSchedule;
 

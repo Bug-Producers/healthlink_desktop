@@ -27,8 +27,6 @@ mixin _$DoctorProfile {
   String? get country => throw _privateConstructorUsedError;
   String? get hospitalOrClinicName => throw _privateConstructorUsedError;
   String? get about => throw _privateConstructorUsedError;
-  int? get appointmentDuration => throw _privateConstructorUsedError;
-  int? get bufferTime => throw _privateConstructorUsedError;
   @JsonKey(name: 'profileImage')
   String? get image => throw _privateConstructorUsedError;
   Map<String, dynamic>? get department => throw _privateConstructorUsedError;
@@ -57,8 +55,6 @@ abstract class $DoctorProfileCopyWith<$Res> {
       String? country,
       String? hospitalOrClinicName,
       String? about,
-      int? appointmentDuration,
-      int? bufferTime,
       @JsonKey(name: 'profileImage') String? image,
       Map<String, dynamic>? department,
       int? expYears});
@@ -85,8 +81,6 @@ class _$DoctorProfileCopyWithImpl<$Res, $Val extends DoctorProfile>
     Object? country = freezed,
     Object? hospitalOrClinicName = freezed,
     Object? about = freezed,
-    Object? appointmentDuration = freezed,
-    Object? bufferTime = freezed,
     Object? image = freezed,
     Object? department = freezed,
     Object? expYears = freezed,
@@ -116,14 +110,6 @@ class _$DoctorProfileCopyWithImpl<$Res, $Val extends DoctorProfile>
           ? _value.about
           : about // ignore: cast_nullable_to_non_nullable
               as String?,
-      appointmentDuration: freezed == appointmentDuration
-          ? _value.appointmentDuration
-          : appointmentDuration // ignore: cast_nullable_to_non_nullable
-              as int?,
-      bufferTime: freezed == bufferTime
-          ? _value.bufferTime
-          : bufferTime // ignore: cast_nullable_to_non_nullable
-              as int?,
       image: freezed == image
           ? _value.image
           : image // ignore: cast_nullable_to_non_nullable
@@ -155,8 +141,6 @@ abstract class _$$DoctorProfileImplCopyWith<$Res>
       String? country,
       String? hospitalOrClinicName,
       String? about,
-      int? appointmentDuration,
-      int? bufferTime,
       @JsonKey(name: 'profileImage') String? image,
       Map<String, dynamic>? department,
       int? expYears});
@@ -181,8 +165,6 @@ class __$$DoctorProfileImplCopyWithImpl<$Res>
     Object? country = freezed,
     Object? hospitalOrClinicName = freezed,
     Object? about = freezed,
-    Object? appointmentDuration = freezed,
-    Object? bufferTime = freezed,
     Object? image = freezed,
     Object? department = freezed,
     Object? expYears = freezed,
@@ -212,14 +194,6 @@ class __$$DoctorProfileImplCopyWithImpl<$Res>
           ? _value.about
           : about // ignore: cast_nullable_to_non_nullable
               as String?,
-      appointmentDuration: freezed == appointmentDuration
-          ? _value.appointmentDuration
-          : appointmentDuration // ignore: cast_nullable_to_non_nullable
-              as int?,
-      bufferTime: freezed == bufferTime
-          ? _value.bufferTime
-          : bufferTime // ignore: cast_nullable_to_non_nullable
-              as int?,
       image: freezed == image
           ? _value.image
           : image // ignore: cast_nullable_to_non_nullable
@@ -246,8 +220,6 @@ class _$DoctorProfileImpl implements _DoctorProfile {
       this.country,
       this.hospitalOrClinicName,
       this.about,
-      this.appointmentDuration,
-      this.bufferTime,
       @JsonKey(name: 'profileImage') this.image,
       final Map<String, dynamic>? department,
       this.expYears})
@@ -270,10 +242,6 @@ class _$DoctorProfileImpl implements _DoctorProfile {
   @override
   final String? about;
   @override
-  final int? appointmentDuration;
-  @override
-  final int? bufferTime;
-  @override
   @JsonKey(name: 'profileImage')
   final String? image;
   final Map<String, dynamic>? _department;
@@ -291,7 +259,7 @@ class _$DoctorProfileImpl implements _DoctorProfile {
 
   @override
   String toString() {
-    return 'DoctorProfile(id: $id, name: $name, city: $city, country: $country, hospitalOrClinicName: $hospitalOrClinicName, about: $about, appointmentDuration: $appointmentDuration, bufferTime: $bufferTime, image: $image, department: $department, expYears: $expYears)';
+    return 'DoctorProfile(id: $id, name: $name, city: $city, country: $country, hospitalOrClinicName: $hospitalOrClinicName, about: $about, image: $image, department: $department, expYears: $expYears)';
   }
 
   @override
@@ -306,10 +274,6 @@ class _$DoctorProfileImpl implements _DoctorProfile {
             (identical(other.hospitalOrClinicName, hospitalOrClinicName) ||
                 other.hospitalOrClinicName == hospitalOrClinicName) &&
             (identical(other.about, about) || other.about == about) &&
-            (identical(other.appointmentDuration, appointmentDuration) ||
-                other.appointmentDuration == appointmentDuration) &&
-            (identical(other.bufferTime, bufferTime) ||
-                other.bufferTime == bufferTime) &&
             (identical(other.image, image) || other.image == image) &&
             const DeepCollectionEquality()
                 .equals(other._department, _department) &&
@@ -327,8 +291,6 @@ class _$DoctorProfileImpl implements _DoctorProfile {
       country,
       hospitalOrClinicName,
       about,
-      appointmentDuration,
-      bufferTime,
       image,
       const DeepCollectionEquality().hash(_department),
       expYears);
@@ -357,8 +319,6 @@ abstract class _DoctorProfile implements DoctorProfile {
       final String? country,
       final String? hospitalOrClinicName,
       final String? about,
-      final int? appointmentDuration,
-      final int? bufferTime,
       @JsonKey(name: 'profileImage') final String? image,
       final Map<String, dynamic>? department,
       final int? expYears}) = _$DoctorProfileImpl;
@@ -379,10 +339,6 @@ abstract class _DoctorProfile implements DoctorProfile {
   String? get hospitalOrClinicName;
   @override
   String? get about;
-  @override
-  int? get appointmentDuration;
-  @override
-  int? get bufferTime;
   @override
   @JsonKey(name: 'profileImage')
   String? get image;
@@ -909,6 +865,8 @@ DoctorSchedule _$DoctorScheduleFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$DoctorSchedule {
   String? get doctorId => throw _privateConstructorUsedError;
+  int get appointmentDuration => throw _privateConstructorUsedError;
+  int get bufferTime => throw _privateConstructorUsedError;
   Map<String, List<TimeSlot>> get availability =>
       throw _privateConstructorUsedError;
 
@@ -928,7 +886,11 @@ abstract class $DoctorScheduleCopyWith<$Res> {
           DoctorSchedule value, $Res Function(DoctorSchedule) then) =
       _$DoctorScheduleCopyWithImpl<$Res, DoctorSchedule>;
   @useResult
-  $Res call({String? doctorId, Map<String, List<TimeSlot>> availability});
+  $Res call(
+      {String? doctorId,
+      int appointmentDuration,
+      int bufferTime,
+      Map<String, List<TimeSlot>> availability});
 }
 
 /// @nodoc
@@ -947,6 +909,8 @@ class _$DoctorScheduleCopyWithImpl<$Res, $Val extends DoctorSchedule>
   @override
   $Res call({
     Object? doctorId = freezed,
+    Object? appointmentDuration = null,
+    Object? bufferTime = null,
     Object? availability = null,
   }) {
     return _then(_value.copyWith(
@@ -954,6 +918,14 @@ class _$DoctorScheduleCopyWithImpl<$Res, $Val extends DoctorSchedule>
           ? _value.doctorId
           : doctorId // ignore: cast_nullable_to_non_nullable
               as String?,
+      appointmentDuration: null == appointmentDuration
+          ? _value.appointmentDuration
+          : appointmentDuration // ignore: cast_nullable_to_non_nullable
+              as int,
+      bufferTime: null == bufferTime
+          ? _value.bufferTime
+          : bufferTime // ignore: cast_nullable_to_non_nullable
+              as int,
       availability: null == availability
           ? _value.availability
           : availability // ignore: cast_nullable_to_non_nullable
@@ -970,7 +942,11 @@ abstract class _$$DoctorScheduleImplCopyWith<$Res>
       __$$DoctorScheduleImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String? doctorId, Map<String, List<TimeSlot>> availability});
+  $Res call(
+      {String? doctorId,
+      int appointmentDuration,
+      int bufferTime,
+      Map<String, List<TimeSlot>> availability});
 }
 
 /// @nodoc
@@ -987,6 +963,8 @@ class __$$DoctorScheduleImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? doctorId = freezed,
+    Object? appointmentDuration = null,
+    Object? bufferTime = null,
     Object? availability = null,
   }) {
     return _then(_$DoctorScheduleImpl(
@@ -994,6 +972,14 @@ class __$$DoctorScheduleImplCopyWithImpl<$Res>
           ? _value.doctorId
           : doctorId // ignore: cast_nullable_to_non_nullable
               as String?,
+      appointmentDuration: null == appointmentDuration
+          ? _value.appointmentDuration
+          : appointmentDuration // ignore: cast_nullable_to_non_nullable
+              as int,
+      bufferTime: null == bufferTime
+          ? _value.bufferTime
+          : bufferTime // ignore: cast_nullable_to_non_nullable
+              as int,
       availability: null == availability
           ? _value._availability
           : availability // ignore: cast_nullable_to_non_nullable
@@ -1007,6 +993,8 @@ class __$$DoctorScheduleImplCopyWithImpl<$Res>
 class _$DoctorScheduleImpl implements _DoctorSchedule {
   const _$DoctorScheduleImpl(
       {this.doctorId,
+      this.appointmentDuration = 30,
+      this.bufferTime = 10,
       final Map<String, List<TimeSlot>> availability = const {}})
       : _availability = availability;
 
@@ -1015,6 +1003,12 @@ class _$DoctorScheduleImpl implements _DoctorSchedule {
 
   @override
   final String? doctorId;
+  @override
+  @JsonKey()
+  final int appointmentDuration;
+  @override
+  @JsonKey()
+  final int bufferTime;
   final Map<String, List<TimeSlot>> _availability;
   @override
   @JsonKey()
@@ -1026,7 +1020,7 @@ class _$DoctorScheduleImpl implements _DoctorSchedule {
 
   @override
   String toString() {
-    return 'DoctorSchedule(doctorId: $doctorId, availability: $availability)';
+    return 'DoctorSchedule(doctorId: $doctorId, appointmentDuration: $appointmentDuration, bufferTime: $bufferTime, availability: $availability)';
   }
 
   @override
@@ -1036,14 +1030,18 @@ class _$DoctorScheduleImpl implements _DoctorSchedule {
             other is _$DoctorScheduleImpl &&
             (identical(other.doctorId, doctorId) ||
                 other.doctorId == doctorId) &&
+            (identical(other.appointmentDuration, appointmentDuration) ||
+                other.appointmentDuration == appointmentDuration) &&
+            (identical(other.bufferTime, bufferTime) ||
+                other.bufferTime == bufferTime) &&
             const DeepCollectionEquality()
                 .equals(other._availability, _availability));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, doctorId,
-      const DeepCollectionEquality().hash(_availability));
+  int get hashCode => Object.hash(runtimeType, doctorId, appointmentDuration,
+      bufferTime, const DeepCollectionEquality().hash(_availability));
 
   /// Create a copy of DoctorSchedule
   /// with the given fields replaced by the non-null parameter values.
@@ -1065,6 +1063,8 @@ class _$DoctorScheduleImpl implements _DoctorSchedule {
 abstract class _DoctorSchedule implements DoctorSchedule {
   const factory _DoctorSchedule(
       {final String? doctorId,
+      final int appointmentDuration,
+      final int bufferTime,
       final Map<String, List<TimeSlot>> availability}) = _$DoctorScheduleImpl;
 
   factory _DoctorSchedule.fromJson(Map<String, dynamic> json) =
@@ -1072,6 +1072,10 @@ abstract class _DoctorSchedule implements DoctorSchedule {
 
   @override
   String? get doctorId;
+  @override
+  int get appointmentDuration;
+  @override
+  int get bufferTime;
   @override
   Map<String, List<TimeSlot>> get availability;
 

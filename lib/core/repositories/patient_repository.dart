@@ -46,7 +46,7 @@ class PatientRepository {
   /// @return A [Future] resolving to a [List] of [PatientHistory] entries.
   Future<List<PatientHistory>> getPatientHistory(String patientId) async {
     final response = await _dio.get(
-      '/api/patients/history',
+      '/api/history',
       queryParameters: {'patientId': patientId},
     );
     final data = _safeList(response.data, 'history');
@@ -60,7 +60,7 @@ class PatientRepository {
   /// @return A [Future] that completes when the report is added.
   Future<void> addPatientReport(String patientId, String report) async {
     await _dio.post(
-      '/api/patients/history',
+      '/api/history',
       data: {
         'patientId': patientId,
         'report': report,

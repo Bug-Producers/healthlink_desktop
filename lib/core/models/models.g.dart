@@ -14,8 +14,6 @@ _$DoctorProfileImpl _$$DoctorProfileImplFromJson(Map<String, dynamic> json) =>
       country: json['country'] as String?,
       hospitalOrClinicName: json['hospitalOrClinicName'] as String?,
       about: json['about'] as String?,
-      appointmentDuration: (json['appointmentDuration'] as num?)?.toInt(),
-      bufferTime: (json['bufferTime'] as num?)?.toInt(),
       image: json['profileImage'] as String?,
       department: json['department'] as Map<String, dynamic>?,
       expYears: (json['expYears'] as num?)?.toInt(),
@@ -29,8 +27,6 @@ Map<String, dynamic> _$$DoctorProfileImplToJson(_$DoctorProfileImpl instance) =>
       'country': instance.country,
       'hospitalOrClinicName': instance.hospitalOrClinicName,
       'about': instance.about,
-      'appointmentDuration': instance.appointmentDuration,
-      'bufferTime': instance.bufferTime,
       'profileImage': instance.image,
       'department': instance.department,
       'expYears': instance.expYears,
@@ -79,6 +75,8 @@ Map<String, dynamic> _$$TimeSlotImplToJson(_$TimeSlotImpl instance) =>
 _$DoctorScheduleImpl _$$DoctorScheduleImplFromJson(Map<String, dynamic> json) =>
     _$DoctorScheduleImpl(
       doctorId: json['doctorId'] as String?,
+      appointmentDuration: (json['appointmentDuration'] as num?)?.toInt() ?? 30,
+      bufferTime: (json['bufferTime'] as num?)?.toInt() ?? 10,
       availability: (json['availability'] as Map<String, dynamic>?)?.map(
             (k, e) => MapEntry(
                 k,
@@ -93,6 +91,8 @@ Map<String, dynamic> _$$DoctorScheduleImplToJson(
         _$DoctorScheduleImpl instance) =>
     <String, dynamic>{
       'doctorId': instance.doctorId,
+      'appointmentDuration': instance.appointmentDuration,
+      'bufferTime': instance.bufferTime,
       'availability': instance.availability,
     };
 
