@@ -36,7 +36,7 @@ Future<void> main() async {
 
   WindowOptions windowOptions = const WindowOptions(
     size: Size(1200, 800),
-    minimumSize: Size(1000, 800),
+    minimumSize: Size(900, 600),
     center: true,
     title: "HealthLink Clinical Atelier",
   );
