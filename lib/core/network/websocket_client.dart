@@ -32,7 +32,7 @@ class WebSocketClient {
     if (_isConnected) return;
     _isIntentionalDisconnect = false;
 
-    final wsUrl = dotenv.env['WS_BASE_URL'] ?? 'ws://localhost:3000';
+    final wsUrl = dotenv.env['WS_BASE_URL'] ?? 'wss://healthlink-api.loca.lt/';
     final url = Uri.parse('$wsUrl/api/ws/notifications');
 
     try {

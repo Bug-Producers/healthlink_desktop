@@ -43,7 +43,7 @@ dynamic _deepDecode(dynamic value) {
 @riverpod
 Dio apiClient(Ref ref) {
   final dio = Dio(BaseOptions(
-    baseUrl: dotenv.env['API_BASE_URL'] ?? 'http://localhost:3000',
+    baseUrl: dotenv.env['API_BASE_URL'] ?? 'https://healthlink-api.loca.lt/',
     connectTimeout: const Duration(seconds: 10),
     receiveTimeout: const Duration(seconds: 10),
     responseType: ResponseType.plain, // Force ALL responses to be raw strings
